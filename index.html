@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SignalPro AI – Earn Money Unlimited</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --black:   #0a0a0f;
+      --dark:    #111118;
+      --card:    #16161f;
+      --white:   #f0f0f5;
+      --gold:    #f5c518;
+      --green:   #00e676;
+      --red:     #ff1744;
+      --purple:  #ce93d8;
+      --orange:  #ff9100;
+      --gray:    #9e9e9e;
+      --nav-h:   65px;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Rajdhani', 'Noto Sans Devanagari', sans-serif;
+      min-height: 100vh;
+      padding-bottom: var(--nav-h);
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content:'';
+      position:fixed; inset:0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events:none; z-index:0;
+    }
+
+    /* ══════════════════════════════
+       HEADER
+    ══════════════════════════════ */
+    header {
+      position: sticky; top:0; z-index:100;
+      background: rgba(10,10,15,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(245,197,24,0.2);
+      padding: 0 16px;
+      height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .header-left {
+      display:flex; align-items:center; gap:8px;
+    }
+    .active-dot {
+      width:10px; height:10px; border-radius:50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green), 0 0 16px var(--green);
+      animation: pulse-dot 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100%{ transform:scale(1); opacity:1; }
+      50%{ transform:scale(1.4); opacity:.7; }
+    }
+    .active-label {
+      font-size:11px; color:var(--green);
+      font-weight:600; letter-spacing:1px;
+      text-transform:uppercase;
+    }
+
+    .header-title {
+      font-family:'Orbitron',sans-serif;
+      font-size: clamp(13px,3.5vw,18px);
+      font-weight:900;
+      background: linear-gradient(90deg, var(--gold), var(--orange), var(--gold));
+      background-size:200%;
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      animation: shimmer 3s linear infinite;
+      letter-spacing:1px;
+      text-align:center;
+    }
+    @keyframes shimmer {
+      0%{background-position:0%} 100%{background-position:200%}
+    }
+
+    .header-logo {
+      width:38px; height:38px; border-radius:50%;
+      background: linear-gradient(135deg,var(--gold),var(--orange));
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Orbitron',sans-serif; font-weight:900;
+      font-size:14px; color:#000;
+      box-shadow: 0 0 12px rgba(245,197,24,0.5);
+      flex-shrink:0;
+    }
+
+    /* ══════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════ */
+    main {
+      position:relative; z-index:1;
+      max-width:500px; margin:0 auto;
+      padding: 20px 16px 24px;
+    }
+
+    /* ── HERO TAGLINE ── */
+    .hero {
+      text-align:center;
+      background: linear-gradient(145deg, rgba(245,197,24,0.07), rgba(206,147,216,0.07), rgba(255,145,0,0.07));
+      border: 1px solid rgba(245,197,24,0.15);
+      border-radius:16px;
+      padding:22px 18px;
+      margin-bottom:20px;
+      position:relative; overflow:hidden;
+    }
+    .hero::before {
+      content:'';
+      position:absolute; top:-40%; left:-20%;
+      width:140%; height:180%;
+      background: radial-gradient(ellipse at 50% 0%, rgba(245,197,24,0.08) 0%, transparent 60%);
+      pointer-events:none;
+    }
+    .hero-emoji-row {
+      font-size:20px; letter-spacing:6px; margin-bottom:10px;
+    }
+    .hero h1 {
+      font-family:'Rajdhani',sans-serif;
+      font-size: clamp(16px,4.5vw,22px);
+      font-weight:700; line-height:1.5;
+      color: var(--white);
+    }
+    .hero h1 span.loss { color:var(--red); }
+    .hero h1 span.profit { color:var(--green); }
+    .hero h1 span.platform { color:var(--gold); }
+
+    .hero-sub {
+      margin-top:10px;
+      font-size:13px; color:var(--gray);
+      line-height:1.6;
+    }
+
+    /* ── PROFIT SCREENSHOT CARD ── */
+    .screenshot-card {
+      position:relative;
+      border-radius:16px; overflow:hidden;
+      margin-bottom:20px;
+      border:1px solid rgba(0,230,118,0.25);
+      box-shadow: 0 0 24px rgba(0,230,118,0.1), 0 8px 32px rgba(0,0,0,0.5);
+      aspect-ratio: 3/5;
+      background: var(--card);
+      display:flex; align-items:center; justify-content:center;
+      flex-direction:column; gap:12px;
+    }
+    .screenshot-card img {
+      width:100%; height:100%;
+      object-fit:cover; display:block;
+    }
+    .screenshot-card .img-placeholder {
+      text-align:center; padding:20px;
+    }
+    .screenshot-card .img-placeholder .big-icon { font-size:52px; }
+    .screenshot-card .img-placeholder p {
+      color:var(--gray); font-size:13px; margin-top:8px;
+    }
+    .screenshot-badge {
+      position:absolute; top:12px; left:12px;
+      background:rgba(0,0,0,0.75); backdrop-filter:blur(6px);
+      border:1px solid var(--green); border-radius:8px;
+      padding:5px 10px;
+      font-size:11px; color:var(--green); font-weight:700;
+      letter-spacing:1px;
+    }
+    .screenshot-badge2 {
+      position:absolute; bottom:12px; right:12px;
+      background:linear-gradient(135deg,var(--green),#00c853);
+      border-radius:8px; padding:6px 12px;
+      font-size:12px; font-weight:700; color:#000;
+      box-shadow:0 4px 14px rgba(0,230,118,0.4);
+    }
+
+    /* ── TRUST STATS ── */
+    .trust-stats {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:10px; margin-bottom:20px;
+    }
+    .stat-box {
+      background:var(--card);
+      border-radius:12px; padding:14px 12px;
+      text-align:center;
+      border:1px solid;
+      position:relative; overflow:hidden;
+    }
+    .stat-box::after {
+      content:'';
+      position:absolute; inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,0.03),transparent);
+    }
+    .stat-box.gold { border-color:rgba(245,197,24,0.3); }
+    .stat-box.green { border-color:rgba(0,230,118,0.3); }
+    .stat-box.purple { border-color:rgba(206,147,216,0.3); }
+    .stat-box.orange { border-color:rgba(255,145,0,0.3); }
+
+    .stat-num {
+      font-family:'Orbitron',sans-serif; font-weight:900;
+      font-size:22px; line-height:1;
+    }
+    .stat-box.gold .stat-num { color:var(--gold); }
+    .stat-box.green .stat-num { color:var(--green); }
+    .stat-box.purple .stat-num { color:var(--purple); }
+    .stat-box.orange .stat-num { color:var(--orange); }
+
+    .stat-label {
+      font-size:11px; color:var(--gray);
+      margin-top:5px; font-weight:600; letter-spacing:.5px;
+    }
+
+    /* ── TRUST LIST ── */
+    .trust-list {
+      background:var(--card);
+      border-radius:16px; padding:18px 16px;
+      margin-bottom:20px;
+      border:1px solid rgba(206,147,216,0.2);
+    }
+    .trust-list h3 {
+      font-size:15px; font-weight:700; color:var(--purple);
+      margin-bottom:14px; letter-spacing:.5px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .trust-item {
+      display:flex; align-items:flex-start; gap:10px;
+      margin-bottom:12px; padding-bottom:12px;
+      border-bottom:1px solid rgba(255,255,255,0.05);
+    }
+    .trust-item:last-child { margin-bottom:0; padding-bottom:0; border-bottom:none; }
+    .trust-icon {
+      width:32px; height:32px; border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:16px; flex-shrink:0;
+    }
+    .trust-icon.g { background:rgba(0,230,118,0.15); }
+    .trust-icon.y { background:rgba(245,197,24,0.15); }
+    .trust-icon.o { background:rgba(255,145,0,0.15); }
+    .trust-icon.p { background:rgba(206,147,216,0.15); }
+    .trust-text strong {
+      display:block; font-size:13px; font-weight:700; color:var(--white);
+    }
+    .trust-text span {
+      font-size:12px; color:var(--gray); line-height:1.5;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      margin-bottom:20px;
+    }
+    .how-section h3 {
+      font-size:16px; font-weight:700; color:var(--gold);
+      margin-bottom:14px; text-align:center;
+      font-family:'Orbitron',sans-serif; letter-spacing:1px;
+    }
+    .steps {
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .step {
+      display:flex; align-items:center; gap:12px;
+      background:var(--card); border-radius:12px;
+      padding:12px 14px;
+      border-left:3px solid;
+    }
+    .step:nth-child(1){ border-color:var(--gold); }
+    .step:nth-child(2){ border-color:var(--orange); }
+    .step:nth-child(3){ border-color:var(--green); }
+    .step:nth-child(4){ border-color:var(--purple); }
+    .step-num {
+      font-family:'Orbitron',sans-serif; font-weight:900;
+      font-size:20px; min-width:28px;
+    }
+    .step:nth-child(1) .step-num { color:var(--gold); }
+    .step:nth-child(2) .step-num { color:var(--orange); }
+    .step:nth-child(3) .step-num { color:var(--green); }
+    .step:nth-child(4) .step-num { color:var(--purple); }
+    .step-text strong {
+      display:block; font-size:13px; color:var(--white); font-weight:700;
+    }
+    .step-text span {
+      font-size:12px; color:var(--gray);
+    }
+
+    /* ── SIGNAL PREVIEW ── */
+    .signal-preview {
+      background: linear-gradient(135deg, rgba(0,230,118,0.05), rgba(245,197,24,0.05));
+      border:1px solid rgba(0,230,118,0.2);
+      border-radius:16px; padding:16px;
+      margin-bottom:20px;
+    }
+    .signal-preview h3 {
+      font-size:14px; color:var(--green); font-weight:700;
+      margin-bottom:12px; letter-spacing:.5px;
+      display:flex; align-items:center; gap:6px;
+    }
+    .signal-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 0;
+      border-bottom:1px solid rgba(255,255,255,0.05);
+    }
+    .signal-row:last-child { border-bottom:none; }
+    .signal-pair {
+      font-family:'Orbitron',sans-serif; font-size:13px;
+      color:var(--white); font-weight:700;
+    }
+    .signal-dir {
+      padding:4px 14px; border-radius:20px;
+      font-size:12px; font-weight:700; letter-spacing:1px;
+    }
+    .signal-dir.up {
+      background:rgba(0,230,118,0.2); color:var(--green);
+      border:1px solid rgba(0,230,118,0.4);
+    }
+    .signal-dir.down {
+      background:rgba(255,23,68,0.2); color:var(--red);
+      border:1px solid rgba(255,23,68,0.4);
+    }
+    .signal-acc {
+      font-size:12px; color:var(--gold); font-weight:700;
+    }
+    .signal-blur-row {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 0;
+    }
+    .signal-blur-row > * { filter:blur(5px); user-select:none; }
+    .signal-lock {
+      text-align:center; margin-top:10px;
+      font-size:12px; color:var(--orange);
+      display:flex; align-items:center; justify-content:center; gap:6px;
+    }
+
+    /* ── CTA ── */
+    .cta-btn {
+      display:block; width:100%;
+      background:linear-gradient(135deg, var(--gold), var(--orange));
+      color:#000; font-weight:900;
+      font-family:'Orbitron',sans-serif;
+      font-size:15px; letter-spacing:1px;
+      padding:16px; border-radius:14px;
+      text-align:center; text-decoration:none;
+      border:none; cursor:pointer;
+      box-shadow:0 4px 24px rgba(245,197,24,0.35), 0 0 0 0 rgba(245,197,24,0.4);
+      animation: cta-pulse 2s ease-in-out infinite;
+      margin-bottom:12px;
+      transition: transform .15s;
+    }
+    .cta-btn:active { transform:scale(.97); }
+    @keyframes cta-pulse {
+      0%,100%{ box-shadow:0 4px 24px rgba(245,197,24,0.35), 0 0 0 0 rgba(245,197,24,0.4); }
+      50%{ box-shadow:0 4px 32px rgba(245,197,24,0.55), 0 0 0 10px rgba(245,197,24,0); }
+    }
+
+    .disclaimer {
+      text-align:center; font-size:11px; color:var(--gray);
+      padding:0 10px 10px;
+    }
+
+    /* ══════════════════════════════
+       BOTTOM NAV
+    ══════════════════════════════ */
+    .bottom-nav {
+      position:fixed; bottom:0; left:0; right:0;
+      height:var(--nav-h); z-index:200;
+      background:rgba(10,10,15,0.97);
+      backdrop-filter:blur(16px);
+      border-top:1px solid rgba(245,197,24,0.15);
+      display:flex; align-items:stretch;
+    }
+    .nav-btn {
+      flex:1; display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      gap:4px; text-decoration:none;
+      color:var(--gray);
+      font-size:10px; font-weight:600;
+      letter-spacing:.5px; text-transform:uppercase;
+      transition: color .2s;
+      position:relative;
+      cursor:pointer; background:none; border:none;
+    }
+    .nav-btn .nav-icon { font-size:22px; line-height:1; }
+    .nav-btn.active { color:var(--gold); }
+    .nav-btn.active::after {
+      content:'';
+      position:absolute; top:0; left:20%; right:20%; height:2px;
+      background:linear-gradient(90deg,transparent,var(--gold),transparent);
+      border-radius:0 0 4px 4px;
+    }
+    .nav-btn:nth-child(2).active { color:var(--purple); }
+    .nav-btn:nth-child(2).active::after { background:linear-gradient(90deg,transparent,var(--purple),transparent); }
+    .nav-btn:nth-child(3).active { color:var(--green); }
+    .nav-btn:nth-child(3).active::after { background:linear-gradient(90deg,transparent,var(--green),transparent); }
+    .nav-btn:nth-child(4).active { color:var(--orange); }
+    .nav-btn:nth-child(4).active::after { background:linear-gradient(90deg,transparent,var(--orange),transparent); }
+
+    /* ── TICKER TAPE ── */
+    .ticker-wrap {
+      overflow:hidden; background:rgba(245,197,24,0.06);
+      border-top:1px solid rgba(245,197,24,0.12);
+      border-bottom:1px solid rgba(245,197,24,0.12);
+      padding:6px 0; margin-bottom:20px;
+      white-space:nowrap;
+    }
+    .ticker-inner {
+      display:inline-block;
+      animation: ticker-scroll 18s linear infinite;
+    }
+    @keyframes ticker-scroll {
+      0%{ transform:translateX(0); }
+      100%{ transform:translateX(-50%); }
+    }
+    .ticker-item {
+      display:inline-flex; align-items:center; gap:6px;
+      margin:0 20px; font-size:12px; font-weight:600;
+    }
+    .ticker-item .up { color:var(--green); }
+    .ticker-item .down { color:var(--red); }
+
+    /* ── FLOATING BADGE ── */
+    .float-badge {
+      position:fixed; right:14px; bottom:calc(var(--nav-h) + 14px);
+      background:linear-gradient(135deg,var(--red),#d50000);
+      color:#fff; border-radius:50px;
+      padding:8px 14px; font-size:12px; font-weight:700;
+      box-shadow:0 4px 16px rgba(255,23,68,0.45);
+      z-index:150; animation:float-bob 3s ease-in-out infinite;
+      cursor:pointer;
+    }
+    @keyframes float-bob {
+      0%,100%{ transform:translateY(0); }
+      50%{ transform:translateY(-5px); }
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity:0; transform:translateY(24px);
+      animation:reveal-up .6s ease forwards;
+    }
+    @keyframes reveal-up {
+      to{ opacity:1; transform:translateY(0); }
+    }
+    .d1{ animation-delay:.1s; }
+    .d2{ animation-delay:.2s; }
+    .d3{ animation-delay:.3s; }
+    .d4{ animation-delay:.4s; }
+    .d5{ animation-delay:.5s; }
+    .d6{ animation-delay:.6s; }
+    .d7{ animation-delay:.7s; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <div class="active-dot"></div>
+      <span class="active-label">Active</span>
+    </div>
+    <div class="header-title">Earn Money Unlimited</div>
+    <div class="header-logo">
+      <!-- Replace with <img src="logo.png" …> -->
+      SP
+    </div>
+  </header>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker-inner">
+      <span class="ticker-item">EUR/USD <span class="up">▲ BIG</span></span>
+      <span class="ticker-item">BTC/USDT <span class="down">▼ SMALL</span></span>
+      <span class="ticker-item">GBP/USD <span class="up">▲ BIG</span></span>
+      <span class="ticker-item">GOLD <span class="up">▲ UP</span></span>
+      <span class="ticker-item">OIL <span class="down">▼ DOWN</span></span>
+      <span class="ticker-item">NASDAQ <span class="up">▲ BIG</span></span>
+      <!-- duplicate for seamless loop -->
+      <span class="ticker-item">EUR/USD <span class="up">▲ BIG</span></span>
+      <span class="ticker-item">BTC/USDT <span class="down">▼ SMALL</span></span>
+      <span class="ticker-item">GBP/USD <span class="up">▲ BIG</span></span>
+      <span class="ticker-item">GOLD <span class="up">▲ UP</span></span>
+      <span class="ticker-item">OIL <span class="down">▼ DOWN</span></span>
+      <span class="ticker-item">NASDAQ <span class="up">▲ BIG</span></span>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- HERO -->
+    <div class="hero reveal d1">
+      <div class="hero-emoji-row">⚪🟡🟢🔴🟣🟠⚫</div>
+      <h1>
+        Agar aap bhi <span class="loss">Loss</span> Kar Kar Ke<br>
+        Thak Chuke Hain aur ab<br>
+        <span class="profit">Profit</span> Kamana Chahte Hain —<br>
+        To Yeh <span class="platform">Platform Aapke Liye Hai</span>
+      </h1>
+      <p class="hero-sub">AI-powered 1-minute signal • Big/Small & Up/Down • 95%+ Accuracy</p>
+    </div>
+
+    <!-- SCREENSHOT -->
+    <div class="screenshot-card reveal d2">
+      <!-- Replace this block with: <img src="Image2.jpg" alt="Profit Proof"/> -->
+      <div class="img-placeholder">
+        <div class="big-icon">📸</div>
+        <p>Yahan <strong style="color:var(--white)">Image2.jpg</strong> add karein<br>(apna profit screenshot)</p>
+      </div>
+      <div class="screenshot-badge">✅ REAL PROFIT</div>
+      <div class="screenshot-badge2">+₹12,450 Today</div>
+    </div>
+
+    <!-- TRUST STATS -->
+    <div class="trust-stats reveal d3">
+      <div class="stat-box gold">
+        <div class="stat-num">10K+</div>
+        <div class="stat-label">Active Members</div>
+      </div>
+      <div class="stat-box green">
+        <div class="stat-num">95%</div>
+        <div class="stat-label">Accuracy Rate</div>
+      </div>
+      <div class="stat-box purple">
+        <div class="stat-num">3yr+</div>
+        <div class="stat-label">Experience</div>
+      </div>
+      <div class="stat-box orange">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Live Signals</div>
+      </div>
+    </div>
+
+    <!-- SIGNAL PREVIEW -->
+    <div class="signal-preview reveal d4">
+      <h3>🔴 Live Signal Preview</h3>
+      <div class="signal-row">
+        <span class="signal-pair">EUR/USD</span>
+        <span class="signal-dir up">▲ BIG</span>
+        <span class="signal-acc">95.2%</span>
+      </div>
+      <div class="signal-row">
+        <span class="signal-pair">BTC/USDT</span>
+        <span class="signal-dir down">▼ SMALL</span>
+        <span class="signal-acc">93.7%</span>
+      </div>
+      <!-- Blurred VIP signals -->
+      <div class="signal-blur-row">
+        <span class="signal-pair">GBP/JPY</span>
+        <span class="signal-dir up">▲ UP</span>
+        <span class="signal-acc">97.1%</span>
+      </div>
+      <div class="signal-blur-row">
+        <span class="signal-pair">GOLD</span>
+        <span class="signal-dir down">▼ DOWN</span>
+        <span class="signal-acc">96.4%</span>
+      </div>
+      <div class="signal-lock">🔒 VIP members ko milte hain full signals</div>
+    </div>
+
+    <!-- TRUST LIST -->
+    <div class="trust-list reveal d5">
+      <h3>🟣 Hum Par Kyun Trust Karein?</h3>
+      <div class="trust-item">
+        <div class="trust-icon g">🤖</div>
+        <div class="trust-text">
+          <strong>AI-Powered Analysis</strong>
+          <span>Hamara AI 50+ indicators ek saath analyze karta hai — har 1 minute mein</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon y">📊</div>
+        <div class="trust-text">
+          <strong>Proven Track Record</strong>
+          <span>3 saal se consistently 90%+ accuracy — sabut ke saath</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon o">⚡</div>
+        <div class="trust-text">
+          <strong>Instant Signal Delivery</strong>
+          <span>Signal milta hai trade se 30 second pehle — poora time milta hai</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon p">🛡️</div>
+        <div class="trust-text">
+          <strong>Risk Management</strong>
+          <span>Har signal ke saath stop-loss aur target bhi bataya jaata hai</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="how-section reveal d6">
+      <h3>How It Works</h3>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">01</span>
+          <div class="step-text">
+            <strong>Register & Subscribe</strong>
+            <span>Plan choose karein — 7, 15, ya 28 din ka</span>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">02</span>
+          <div class="step-text">
+            <strong>VIP Access Milega</strong>
+            <span>Coins se subscription activate karein</span>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">03</span>
+          <div class="step-text">
+            <strong>Signal Dekho</strong>
+            <span>Big/Small ya Up/Down signal live dekhein</span>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">04</span>
+          <div class="step-text">
+            <strong>Profit Kamao</strong>
+            <span>Trade karo aur daily income banao</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="reveal d7">
+      <a href="vip.html" class="cta-btn">💎 GET VIP ACCESS NOW</a>
+      <p class="disclaimer">⚠️ Trading mein risk hota hai. Sirf woh invest karein jo aap afford kar sakein.</p>
+    </div>
+
+  </main>
+
+  <!-- FLOATING BADGE -->
+  <div class="float-badge" onclick="location.href='vip.html'">🔥 Join VIP</div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="location.href='index.html'">
+      <span class="nav-icon">🏠</span>
+      Home
+    </button>
+    <button class="nav-btn" onclick="location.href='vip.html'">
+      <span class="nav-icon">💎</span>
+      VIP Shot
+    </button>
+    <button class="nav-btn" onclick="location.href='proof.html'">
+      <span class="nav-icon">📊</span>
+      Proof
+    </button>
+    <button class="nav-btn" onclick="location.href='account.html'">
+      <span class="nav-icon">👤</span>
+      Account
+    </button>
+  </nav>
+
+</body>
+</html>
