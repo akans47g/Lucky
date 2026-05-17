@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SignalPro AI – Earn Money Unlimited</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* ═══════════════════════════════════════
+       DESIGN TOKENS — Premium Dark Theme
+    ═══════════════════════════════════════ */
+    :root {
+      --bg:        #07070f;
+      --bg2:       #0d0d1a;
+      --card:      #12121f;
+      --card2:     #1a1a2e;
+      --border:    rgba(255,255,255,0.07);
+      --gold:      #f5c518;
+      --gold2:     #ffd740;
+      --gold-dim:  rgba(245,197,24,0.15);
+      --green:     #00e676;
+      --green-dim: rgba(0,230,118,0.12);
+      --red:       #ff4757;
+      --red-dim:   rgba(255,71,87,0.12);
+      --purple:    #b39ddb;
+      --purple-d:  #7c4dff;
+      --orange:    #ff9100;
+      --white:     #f0f0f8;
+      --gray:      #6b6b8a;
+      --gray2:     #3a3a5c;
+      --nav-h:     66px;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Rajdhani', 'Noto Sans Devanagari', sans-serif;
+      min-height: 100vh;
+      padding-bottom: var(--nav-h);
+      overflow-x: hidden;
+    }
+
+    /* Subtle grid overlay */
+    body::after {
+      content:'';
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:
+        linear-gradient(rgba(245,197,24,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,197,24,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ═══ HEADER ═══ */
+    header {
+      position:sticky; top:0; z-index:200;
+      height:60px;
+      background: rgba(7,7,15,0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(245,197,24,0.3);
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 0 16px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+    }
+
+    .hd-left { display:flex; align-items:center; gap:8px; }
+
+    .live-pill {
+      display:flex; align-items:center; gap:5px;
+      background: rgba(0,230,118,0.1);
+      border:1px solid rgba(0,230,118,0.35);
+      border-radius:20px; padding:3px 10px;
+    }
+    .live-dot {
+      width:7px; height:7px; border-radius:50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green), 0 0 12px var(--green);
+      animation: live-pulse 1.3s ease-in-out infinite;
+    }
+    @keyframes live-pulse {
+      0%,100%{ transform:scale(1); opacity:1; }
+      50%{ transform:scale(1.6); opacity:.5; }
+    }
+    .live-text { font-size:10px; color:var(--green); font-weight:700; letter-spacing:1.5px; }
+
+    .hd-title {
+      font-family:'Orbitron', sans-serif;
+      font-size: clamp(10px, 2.8vw, 15px);
+      font-weight:900; letter-spacing:1px;
+      background: linear-gradient(90deg, var(--gold), var(--gold2), var(--orange), var(--gold));
+      background-size: 300%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: title-shimmer 3s linear infinite;
+    }
+    @keyframes title-shimmer { 0%{background-position:0%} 100%{background-position:300%} }
+
+    .hd-logo {
+      width:40px; height:40px; border-radius:50%;
+      border:2px solid var(--gold);
+      box-shadow: 0 0 12px rgba(245,197,24,0.4);
+      overflow:hidden; background:var(--card2);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .hd-logo img { width:100%; height:100%; object-fit:cover; display:block; }
+    .hd-logo .lf { font-family:'Orbitron',sans-serif; font-size:12px; font-weight:900; color:var(--gold); display:none; }
+
+    /* ═══ TICKER ═══ */
+    .ticker-wrap {
+      background: linear-gradient(90deg, #0d0a20, #110d28, #0d0a20);
+      border-bottom: 1px solid rgba(245,197,24,0.2);
+      padding:0; height:34px; overflow:hidden;
+      position:relative; z-index:1;
+    }
+    .ticker-wrap::before,
+    .ticker-wrap::after {
+      content:''; position:absolute; top:0; bottom:0; width:40px; z-index:2;
+      pointer-events:none;
+    }
+    .ticker-wrap::before { left:0; background:linear-gradient(90deg,#0d0a20,transparent); }
+    .ticker-wrap::after  { right:0; background:linear-gradient(-90deg,#0d0a20,transparent); }
+
+    .ticker-track {
+      display:flex; align-items:center; height:100%;
+      white-space:nowrap;
+      animation: ticker-go 16s linear infinite;
+    }
+    @keyframes ticker-go { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+    .t-item {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:0 20px; height:34px;
+      font-family:'Orbitron',sans-serif;
+      font-size:11px; font-weight:700; letter-spacing:.5px;
+      color:rgba(255,255,255,0.5);
+    }
+    .t-item .sep { color:rgba(245,197,24,0.3); font-size:14px; }
+
+    .t-big {
+      background:var(--green-dim);
+      border:1px solid rgba(0,230,118,0.4);
+      border-radius:4px; padding:2px 8px;
+      color:var(--green); font-size:10px; font-weight:800; letter-spacing:1px;
+      animation: big-glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes big-glow {
+      from{ box-shadow:0 0 4px rgba(0,230,118,0.2); }
+      to{ box-shadow:0 0 10px rgba(0,230,118,0.5); }
+    }
+    .t-small {
+      background:var(--red-dim);
+      border:1px solid rgba(255,71,87,0.4);
+      border-radius:4px; padding:2px 8px;
+      color:var(--red); font-size:10px; font-weight:800; letter-spacing:1px;
+      animation: small-glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes small-glow {
+      from{ box-shadow:0 0 4px rgba(255,71,87,0.2); }
+      to{ box-shadow:0 0 10px rgba(255,71,87,0.5); }
+    }
+
+    /* ═══ MAIN ═══ */
+    main {
+      position:relative; z-index:1;
+      max-width:480px; margin:0 auto;
+      padding: 18px 14px 26px;
+    }
+
+    /* ─── MONEY BANNER ─── */
+    .money-banner {
+      position:relative; overflow:hidden;
+      border-radius:20px; margin-bottom:16px;
+      padding:22px 18px;
+      background: linear-gradient(135deg, #0f0a1e 0%, #1a0a35 40%, #0d1020 100%);
+      border:1px solid rgba(245,197,24,0.35);
+      text-align:center;
+    }
+    /* animated radial orbs */
+    .money-banner::before {
+      content:'';
+      position:absolute; top:-30%; left:-10%; width:120%; height:160%;
+      background:
+        radial-gradient(ellipse at 30% 40%, rgba(124,77,255,0.18) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 60%, rgba(245,197,24,0.12) 0%, transparent 50%);
+      animation: orb-drift 6s ease-in-out infinite alternate;
+    }
+    @keyframes orb-drift {
+      0%{ transform:translate(0,0) scale(1); }
+      100%{ transform:translate(10px,-8px) scale(1.05); }
+    }
+    .mb-emoji {
+      font-size:28px; letter-spacing:6px;
+      position:relative;
+      animation: emoji-wave 2s ease-in-out infinite;
+    }
+    @keyframes emoji-wave {
+      0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)}
+    }
+    .money-banner h2 {
+      font-family:'Orbitron',sans-serif;
+      font-size:clamp(15px,4.5vw,22px); font-weight:900;
+      color:var(--gold); line-height:1.35; margin:10px 0 8px;
+      position:relative;
+      text-shadow:0 0 30px rgba(245,197,24,0.4);
+      animation: text-glow 2.5s ease-in-out infinite alternate;
+    }
+    @keyframes text-glow {
+      from{ text-shadow:0 0 20px rgba(245,197,24,0.3); }
+      to{   text-shadow:0 0 40px rgba(245,197,24,0.7), 0 0 80px rgba(245,197,24,0.3); }
+    }
+    .money-banner p { font-size:13px; color:rgba(220,220,240,0.85); line-height:1.7; position:relative; }
+    .money-banner p .g { color:var(--green); font-weight:800; }
+    .money-banner p .y { color:var(--gold); font-weight:800; }
+    .money-banner p .r { color:var(--red); font-weight:800; }
+
+    /* ─── HERO ─── */
+    .hero {
+      border-radius:20px; margin-bottom:16px; padding:20px 16px;
+      background: var(--card);
+      border:1px solid rgba(179,157,219,0.2);
+      text-align:center; position:relative; overflow:hidden;
+    }
+    .hero::before {
+      content:'';
+      position:absolute; inset:0;
+      background:radial-gradient(ellipse at 50% 0%, rgba(124,77,255,0.08) 0%, transparent 65%);
+    }
+    .hero-colors { font-size:20px; letter-spacing:6px; margin-bottom:12px; position:relative; }
+    .hero h1 {
+      font-size:clamp(15px,4vw,20px); font-weight:700; line-height:1.65;
+      color:rgba(240,240,248,0.92); position:relative;
+    }
+    .hero h1 .loss   { color:var(--red); font-weight:900; }
+    .hero h1 .profit { color:var(--green); font-weight:900; }
+    .hero h1 .plat   { color:var(--gold); font-weight:900; }
+    .hero-sub {
+      margin-top:12px; font-size:12px; color:var(--gray);
+      line-height:1.6; position:relative;
+      display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap;
+    }
+    .hero-pill {
+      background:var(--card2); border:1px solid var(--border);
+      border-radius:20px; padding:3px 10px;
+      font-size:11px; font-weight:700; color:var(--purple);
+    }
+
+    /* ─── SCREENSHOT ─── */
+    .screenshot-wrap {
+      position:relative; margin-bottom:16px;
+    }
+    .screenshot-card {
+      position:relative; border-radius:20px; overflow:hidden;
+      border:2px solid rgba(245,197,24,0.4);
+      box-shadow:0 0 40px rgba(245,197,24,0.12), 0 20px 60px rgba(0,0,0,0.6);
+      aspect-ratio:3/5; background:var(--card);
+      display:flex; align-items:center; justify-content:center;
+      animation: card-float 4s ease-in-out infinite;
+    }
+    @keyframes card-float {
+      0%,100%{ box-shadow:0 0 40px rgba(245,197,24,0.12), 0 20px 60px rgba(0,0,0,0.6); }
+      50%{ box-shadow:0 0 60px rgba(245,197,24,0.22), 0 28px 70px rgba(0,0,0,0.7); }
+    }
+    .screenshot-card img { width:100%; height:100%; object-fit:cover; display:block; }
+
+    .sc-badge-tl {
+      position:absolute; top:12px; left:12px;
+      background:rgba(0,0,0,0.75); backdrop-filter:blur(10px);
+      border:1px solid var(--green); border-radius:8px;
+      padding:5px 11px; font-size:11px; color:var(--green);
+      font-weight:800; letter-spacing:1px;
+      animation: badge-pulse 2s ease-in-out infinite;
+    }
+    @keyframes badge-pulse {
+      0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,0.4)}
+      50%{box-shadow:0 0 0 6px rgba(0,230,118,0)}
+    }
+    .sc-badge-br {
+      position:absolute; bottom:12px; right:12px;
+      background:linear-gradient(135deg,#00b341,#00e676);
+      border-radius:10px; padding:7px 14px;
+      font-size:13px; font-weight:900; color:#000;
+      box-shadow:0 6px 20px rgba(0,230,118,0.45);
+    }
+    .img-ph {
+      display:flex; flex-direction:column; align-items:center;
+      gap:10px; padding:24px; text-align:center;
+    }
+    .img-ph .ico { font-size:48px; }
+    .img-ph p { color:var(--gray); font-size:12px; line-height:1.6; }
+
+    /* ─── STAT GRID ─── */
+    .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+    .stat-card {
+      background:var(--card); border-radius:16px;
+      padding:16px 12px; text-align:center;
+      border:1px solid var(--border);
+      position:relative; overflow:hidden;
+      transition:transform .2s;
+    }
+    .stat-card::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,0.03),transparent);
+    }
+    .stat-card:active { transform:scale(.97); }
+    .stat-card.s-gold   { border-color:rgba(245,197,24,0.3);  box-shadow:0 4px 20px rgba(245,197,24,0.06); }
+    .stat-card.s-green  { border-color:rgba(0,230,118,0.3);   box-shadow:0 4px 20px rgba(0,230,118,0.06); }
+    .stat-card.s-purple { border-color:rgba(124,77,255,0.3);  box-shadow:0 4px 20px rgba(124,77,255,0.06); }
+    .stat-card.s-orange { border-color:rgba(255,145,0,0.3);   box-shadow:0 4px 20px rgba(255,145,0,0.06); }
+    .sn {
+      font-family:'Orbitron',sans-serif; font-weight:900;
+      font-size:22px; line-height:1; position:relative;
+    }
+    .stat-card.s-gold   .sn { color:var(--gold); }
+    .stat-card.s-green  .sn { color:var(--green); }
+    .stat-card.s-purple .sn { color:var(--purple-d); }
+    .stat-card.s-orange .sn { color:var(--orange); }
+    .sl {
+      font-size:10px; color:var(--gray); margin-top:6px;
+      font-weight:700; letter-spacing:.8px; text-transform:uppercase;
+      position:relative;
+    }
+
+    /* ─── WHY VIP ─── */
+    .why-vip {
+      background:var(--card); border-radius:20px;
+      padding:18px 16px; margin-bottom:16px;
+      border:1px solid rgba(124,77,255,0.2);
+    }
+    .section-title {
+      font-family:'Orbitron',sans-serif;
+      font-size:12px; font-weight:700; letter-spacing:2px;
+      color:var(--purple); margin-bottom:14px;
+      display:flex; align-items:center; gap:8px;
+      text-transform:uppercase;
+    }
+    .section-title::after {
+      content:''; flex:1; height:1px;
+      background:linear-gradient(90deg, rgba(179,157,219,0.3), transparent);
+    }
+
+    .trust-row {
+      display:flex; align-items:flex-start; gap:12px;
+      padding:11px 0; border-bottom:1px solid var(--border);
+    }
+    .trust-row:last-child { border-bottom:none; padding-bottom:0; }
+    .tr-icon {
+      width:38px; height:38px; border-radius:12px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center; font-size:19px;
+    }
+    .tr-icon.ig { background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.2); }
+    .tr-icon.iy { background:rgba(245,197,24,0.1); border:1px solid rgba(245,197,24,0.2); }
+    .tr-icon.io { background:rgba(255,145,0,0.1);  border:1px solid rgba(255,145,0,0.2); }
+    .tr-icon.ip { background:rgba(124,77,255,0.1); border:1px solid rgba(124,77,255,0.2); }
+    .tr-body strong { display:block; font-size:13px; font-weight:800; color:var(--white); margin-bottom:2px; }
+    .tr-body span { font-size:11.5px; color:var(--gray); line-height:1.55; }
+
+    /* ─── HOW IT WORKS ─── */
+    .hiw { margin-bottom:16px; }
+    .hiw-title {
+      font-family:'Orbitron',sans-serif;
+      font-size:12px; font-weight:700; letter-spacing:2px;
+      color:var(--gold); margin-bottom:14px;
+      display:flex; align-items:center; gap:8px; text-transform:uppercase;
+    }
+    .hiw-title::after {
+      content:''; flex:1; height:1px;
+      background:linear-gradient(90deg, rgba(245,197,24,0.3), transparent);
+    }
+    .hiw-grid { display:flex; flex-direction:column; gap:8px; }
+    .hiw-step {
+      display:flex; align-items:center; gap:12px;
+      background:var(--card); border-radius:14px;
+      padding:12px 14px;
+      border:1px solid var(--border);
+      position:relative; overflow:hidden;
+      transition:transform .15s;
+    }
+    .hiw-step:active{ transform:scale(.98); }
+    .hiw-step::before {
+      content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+      border-radius:14px 0 0 14px;
+    }
+    .hiw-step:nth-child(1)::before { background:var(--gold); }
+    .hiw-step:nth-child(2)::before { background:var(--orange); }
+    .hiw-step:nth-child(3)::before { background:var(--green); }
+    .hiw-step:nth-child(4)::before { background:var(--purple-d); }
+
+    .hiw-num {
+      font-family:'Orbitron',sans-serif; font-weight:900;
+      font-size:22px; min-width:32px; text-align:center;
+    }
+    .hiw-step:nth-child(1) .hiw-num { color:var(--gold); }
+    .hiw-step:nth-child(2) .hiw-num { color:var(--orange); }
+    .hiw-step:nth-child(3) .hiw-num { color:var(--green); }
+    .hiw-step:nth-child(4) .hiw-num { color:var(--purple-d); }
+    .hiw-txt strong { display:block; font-size:13px; font-weight:800; color:var(--white); }
+    .hiw-txt span   { font-size:11.5px; color:var(--gray); }
+
+    /* ─── CTA ─── */
+    .cta-wrap { margin-bottom:8px; }
+    .cta-btn {
+      display:block; width:100%;
+      background:linear-gradient(135deg, var(--gold) 0%, var(--orange) 50%, var(--gold) 100%);
+      background-size:200%;
+      color:#000; font-family:'Orbitron',sans-serif;
+      font-size:14px; font-weight:900; letter-spacing:1px;
+      padding:18px 16px; border-radius:16px;
+      text-align:center; text-decoration:none; border:none; cursor:pointer;
+      position:relative; overflow:hidden;
+      animation:cta-bg-shift 3s linear infinite, cta-shadow 2s ease-in-out infinite;
+      transition:transform .15s;
+    }
+    @keyframes cta-bg-shift { 0%{background-position:0%} 100%{background-position:200%} }
+    @keyframes cta-shadow {
+      0%,100%{ box-shadow:0 6px 30px rgba(245,197,24,0.35); }
+      50%{ box-shadow:0 10px 50px rgba(245,197,24,0.6), 0 0 0 8px rgba(245,197,24,0.08); }
+    }
+    .cta-btn::after {
+      content:'';
+      position:absolute; top:0; left:-100%;
+      width:60%; height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);
+      animation:cta-shine 2.5s ease-in-out infinite;
+    }
+    @keyframes cta-shine { 0%{left:-100%} 60%,100%{left:150%} }
+    .cta-btn:active { transform:scale(.97); }
+
+    .disclaimer { text-align:center; font-size:11px; color:var(--gray); padding:10px 10px 0; line-height:1.5; }
+
+    /* ─── BOTTOM NAV ─── */
+    .bottom-nav {
+      position:fixed; bottom:0; left:0; right:0;
+      height:var(--nav-h); z-index:200;
+      background:rgba(7,7,15,0.97);
+      backdrop-filter:blur(20px);
+      border-top:1px solid rgba(245,197,24,0.25);
+      display:flex; align-items:stretch;
+    }
+    .nav-btn {
+      flex:1; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:4px;
+      background:none; border:none; cursor:pointer;
+      color:var(--gray); font-size:9px; font-weight:700;
+      letter-spacing:.8px; text-transform:uppercase;
+      text-decoration:none; transition:color .2s;
+      position:relative;
+    }
+    .nav-btn .ni { font-size:22px; line-height:1; transition:transform .2s; }
+    .nav-btn.active { color:var(--gold); }
+    .nav-btn.active .ni { transform:translateY(-2px); }
+    .nav-btn.active::after {
+      content:''; position:absolute;
+      top:0; left:15%; right:15%; height:2px; border-radius:0 0 4px 4px;
+      background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    }
+    .nav-btn:nth-child(2).active { color:var(--purple); }
+    .nav-btn:nth-child(2).active::after { background:linear-gradient(90deg,transparent,var(--purple),transparent); }
+    .nav-btn:nth-child(3).active { color:var(--green); }
+    .nav-btn:nth-child(3).active::after { background:linear-gradient(90deg,transparent,var(--green),transparent); }
+    .nav-btn:nth-child(4).active { color:var(--orange); }
+    .nav-btn:nth-child(4).active::after { background:linear-gradient(90deg,transparent,var(--orange),transparent); }
+
+    /* ─── FLOATING BTN ─── */
+    .float-btn {
+      position:fixed; right:14px; bottom:calc(var(--nav-h) + 12px);
+      background:linear-gradient(135deg,#e53935,#b71c1c);
+      color:#fff; border-radius:50px; padding:10px 16px;
+      font-size:12px; font-weight:800; letter-spacing:.5px;
+      box-shadow:0 6px 22px rgba(229,57,53,0.5);
+      z-index:150; cursor:pointer; border:none;
+      animation:float-bob 3s ease-in-out infinite;
+    }
+    @keyframes float-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+
+    /* ─── SCROLL REVEAL ─── */
+    .rv {
+      opacity:0; transform:translateY(28px);
+      animation:rv-up .6s cubic-bezier(.22,.68,0,1.2) forwards;
+    }
+    @keyframes rv-up { to{opacity:1;transform:translateY(0)} }
+    .d1{animation-delay:.06s} .d2{animation-delay:.14s} .d3{animation-delay:.22s}
+    .d4{animation-delay:.30s} .d5{animation-delay:.38s} .d6{animation-delay:.46s}
+    .d7{animation-delay:.54s} .d8{animation-delay:.62s}
+  </style>
+</head>
+<body>
+
+  <!-- ═══ HEADER ═══ -->
+  <header>
+    <div class="hd-left">
+      <div class="live-pill">
+        <div class="live-dot"></div>
+        <span class="live-text">ACTIVE</span>
+      </div>
+    </div>
+    <div class="hd-title">Earn Money Unlimited</div>
+    <div class="hd-logo">
+      <img
+        src="https://raw.githubusercontent.com/akans47g/Lucky/main/logo.jpg"
+        alt="Logo"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+      />
+      <span class="lf" style="display:none">SP</span>
+    </div>
+  </header>
+
+  <!-- ═══ TICKER — Only BIG / SMALL ═══ -->
+  <div class="ticker-wrap">
+    <div class="ticker-track">
+      <!-- set 1 -->
+      <div class="t-item"><span>1 MIN SIGNAL</span> <span class="sep">•</span> <span class="t-big">▲ BIG</span></div>
+      <div class="t-item"><span>AI PREDICTION</span> <span class="sep">•</span> <span class="t-small">▼ SMALL</span></div>
+      <div class="t-item"><span>LIVE SIGNAL</span> <span class="sep">•</span> <span class="t-big">▲ BIG</span></div>
+      <div class="t-item"><span>VIP SIGNAL</span> <span class="sep">•</span> <span class="t-small">▼ SMALL</span></div>
+      <div class="t-item"><span>NEXT CANDLE</span> <span class="sep">•</span> <span class="t-big">▲ BIG</span></div>
+      <div class="t-item"><span>PROFIT ZONE</span> <span class="sep">•</span> <span class="t-big">▲ BIG</span></div>
+      <!-- set 2 (duplicate for seamless loop) -->
+      <div class="t-item"><span>1 MIN SIGNAL</span> <span class="sep">•</span> <span class="t-big">▲ BIG</span></div>
+      <div class="t-item"><span>AI PREDICTION</span> <span class="sep">•</span> <span class="t-small">▼ SMALL</span></div>
+      <div class="t-item"><span>LIVE SIGNAL</span> <span class="sep">•</span> <span class="t-big">▲ BIG</span></div>
+      <div class="t-item"><span>VIP SIGNAL</span> <span class="sep">•</span> <span class="t-small">▼ SMALL</span></div>
+      <div class="t-item"><span>NEXT CANDLE</span> <span class="sep">•</span> <span class="t-big">▲ BIG</span></div>
+      <div class="t-item"><span>PROFIT ZONE</span> <span class="sep">•</span> <span class="t-big">▲ BIG</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN ═══ -->
+  <main>
+
+    <!-- MONEY BANNER -->
+    <div class="money-banner rv d1">
+      <div class="mb-emoji">💰💸🤑💰💸🤑</div>
+      <h2>VIP Lo —<br>Paisa Hi Paisa! 🚀</h2>
+      <p>
+        Jis din se VIP liya — har trade mein <span class="g">PROFIT</span> hi profit.<br>
+        <span class="r">Loss?</span> Woh <span class="y">doosron ke liye</span> hai.<br>
+        VIP members ke liye sirf <span class="g">₹₹₹ Green Candles ₹₹₹</span>
+      </p>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero rv d2">
+      <div class="hero-colors">⚪🟡🟢🔴🟣🟠⚫</div>
+      <h1>
+        Agar aap bhi <span class="loss">Loss</span> Kar Kar Ke<br>
+        Thak Chuke Hain aur ab<br>
+        <span class="profit">Profit</span> Kamana Chahte Hain —<br>
+        To Yeh <span class="plat">Platform Aapke Liye Hai</span>
+      </h1>
+      <div class="hero-sub">
+        <span class="hero-pill">🤖 AI Powered</span>
+        <span class="hero-pill">⚡ 1-Min Signal</span>
+        <span class="hero-pill">📈 BIG / SMALL</span>
+      </div>
+    </div>
+
+    <!-- PROOF SCREENSHOT -->
+    <div class="screenshot-wrap rv d3">
+      <div class="screenshot-card">
+        <img
+          src="https://raw.githubusercontent.com/akans47g/Lucky/main/Image2.jpg"
+          alt="Profit Proof"
+          onerror="this.style.display='none'; document.getElementById('img-ph').style.display='flex';"
+        />
+        <div id="img-ph" class="img-ph" style="display:none;">
+          <div class="ico">📸</div>
+          <p>Image2.jpg GitHub se load hogi<br><span style="color:var(--gold)">repo: akans47g/Lucky</span></p>
+        </div>
+        <div class="sc-badge-tl">✅ REAL PROFIT</div>
+        <div class="sc-badge-br">+₹12,450 Today 🔥</div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stat-grid rv d4">
+      <div class="stat-card s-gold">
+        <div class="sn">10K+</div>
+        <div class="sl">Active Members</div>
+      </div>
+      <div class="stat-card s-green">
+        <div class="sn"><span id="acc">0.0</span>%</div>
+        <div class="sl">Accuracy Rate</div>
+      </div>
+      <div class="stat-card s-purple">
+        <div class="sn" style="font-size:26px">🤖</div>
+        <div class="sl">A.I. Powered</div>
+      </div>
+      <div class="stat-card s-orange">
+        <div class="sn">24/7</div>
+        <div class="sl">Live Signals</div>
+      </div>
+    </div>
+
+    <!-- WHY TRUST -->
+    <div class="why-vip rv d5">
+      <div class="section-title">🟣 Kyun Trust Karein</div>
+      <div class="trust-row">
+        <div class="tr-icon ig">🤖</div>
+        <div class="tr-body">
+          <strong>AI-Powered Analysis</strong>
+          <span>50+ indicators ek saath — har 1 minute mein bilkul accurate prediction</span>
+        </div>
+      </div>
+      <div class="trust-row">
+        <div class="tr-icon iy">📊</div>
+        <div class="tr-body">
+          <strong>Proven Track Record</strong>
+          <span>Hazaron members roz profit kama rahe hain — sabut Proof page par hai</span>
+        </div>
+      </div>
+      <div class="trust-row">
+        <div class="tr-icon io">⚡</div>
+        <div class="tr-body">
+          <strong>Instant Signal Delivery</strong>
+          <span>Trade se 30 sec pehle signal — enter karne ka poora time milta hai</span>
+        </div>
+      </div>
+      <div class="trust-row">
+        <div class="tr-icon ip">💰</div>
+        <div class="tr-body">
+          <strong>VIP = Paisa Hi Paisa</strong>
+          <span>Jo VIP le chuka — woh roz profit nikal raha hai. Aap kab le rahe ho?</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="hiw rv d6">
+      <div class="hiw-title">⚙ How It Works</div>
+      <div class="hiw-grid">
+        <div class="hiw-step">
+          <span class="hiw-num">01</span>
+          <div class="hiw-txt">
+            <strong>Register & Coins Lo</strong>
+            <span>Account banao aur website ke coins kharido</span>
+          </div>
+        </div>
+        <div class="hiw-step">
+          <span class="hiw-num">02</span>
+          <div class="hiw-txt">
+            <strong>VIP Subscribe Karo</strong>
+            <span>Coins se plan activate — 7, 15, ya 28 din ka</span>
+          </div>
+        </div>
+        <div class="hiw-step">
+          <span class="hiw-num">03</span>
+          <div class="hiw-txt">
+            <strong>Big / Small Signal Dekho</strong>
+            <span>AI ka live 1-minute candle prediction dekhein</span>
+          </div>
+        </div>
+        <div class="hiw-step">
+          <span class="hiw-num">04</span>
+          <div class="hiw-txt">
+            <strong>💰 Profit Kamao!</strong>
+            <span>Trade karo — Paisa hi paisa, roz roz!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-wrap rv d7">
+      <a href="vip.html" class="cta-btn">💎 GET VIP ACCESS — PROFIT SHURU KARO</a>
+      <p class="disclaimer">⚠️ Trading mein risk hota hai. Sirf woh invest karein jo aap afford kar sakein.</p>
+    </div>
+
+  </main>
+
+  <!-- FLOATING -->
+  <button class="float-btn" onclick="location.href='vip.html'">🔥 Join VIP</button>
+
+  <!-- NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="location.href='index.html'">
+      <span class="ni">🏠</span>Home
+    </button>
+    <button class="nav-btn" onclick="location.href='vip.html'">
+      <span class="ni">💎</span>VIP Shot
+    </button>
+    <button class="nav-btn" onclick="location.href='proof.html'">
+      <span class="ni">📊</span>Proof
+    </button>
+    <button class="nav-btn" onclick="location.href='account.html'">
+      <span class="ni">👤</span>Account
+    </button>
+  </nav>
+
+  <script>
+    /* ── Animated accuracy counter ── */
+    (function(){
+      const el = document.getElementById('acc');
+      const target = parseFloat((85 + Math.random() * 14.9).toFixed(1));
+      let cur = 0, step = target / 55;
+      const iv = setInterval(() => {
+        cur += step;
+        if(cur >= target){ cur = target; clearInterval(iv); }
+        el.textContent = cur.toFixed(1);
+      }, 20);
+
+      /* Re-randomize every 8s — "live" feel */
+      setInterval(() => {
+        const nxt = parseFloat((85 + Math.random() * 14.9).toFixed(1));
+        let c = parseFloat(el.textContent);
+        const s = (nxt - c) / 38;
+        const iv2 = setInterval(() => {
+          c += s;
+          if(s >= 0 ? c >= nxt : c <= nxt){ c = nxt; clearInterval(iv2); }
+          el.textContent = c.toFixed(1);
+        }, 25);
+      }, 8000);
+    })();
+
+    /* ── Ticker: randomly flip BIG/SMALL every 5s for live feel ── */
+    const tBig   = document.querySelectorAll('.t-big');
+    const tSmall = document.querySelectorAll('.t-small');
+    function flipTicker(){
+      tBig.forEach(el => {
+        if(Math.random() > .65){ el.textContent = '▼ SMALL'; el.className='t-small'; }
+      });
+      tSmall.forEach(el => {
+        if(Math.random() > .65){ el.textContent = '▲ BIG'; el.className='t-big'; }
+      });
+    }
+    setInterval(flipTicker, 5000);
+  </script>
+</body>
+</html>
