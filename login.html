@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | SignalPro AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:       #14142a;
+      --card:     #1e1e38;
+      --card2:    #26264a;
+      --card3:    #2e2e58;
+      --border:   rgba(255,255,255,0.09);
+      --gold:     #f5c518;
+      --gold2:    #ffd740;
+      --green:    #00e676;
+      --red:      #ff4757;
+      --purple:   #ce93d8;
+      --purple-d: #9c6fff;
+      --orange:   #ff9100;
+      --white:    #f4f4ff;
+      --gray:     #9090b8;
+      --gray2:    #4a4a78;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+
+    body {
+      background:var(--bg); color:var(--white);
+      font-family:'Rajdhani','Noto Sans Devanagari',sans-serif;
+      min-height:100vh; overflow-x:hidden;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      padding:20px 16px;
+    }
+    /* dot grid bg */
+    body::after {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:radial-gradient(circle,rgba(156,111,255,0.07) 1px,transparent 1px);
+      background-size:28px 28px;
+    }
+
+    /* ── TOAST ── */
+    #toast {
+      position:fixed; top:18px; left:50%; transform:translateX(-50%) translateY(-8px);
+      z-index:999; padding:11px 22px; border-radius:12px;
+      font-size:13px; font-weight:700;
+      opacity:0; pointer-events:none; transition:opacity .3s, transform .3s;
+      white-space:nowrap; max-width:90vw; text-align:center;
+    }
+    #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    #toast.hidden { display:none; }
+    #toast.success { background:rgba(0,230,118,0.15); border:1px solid var(--green); color:var(--green); }
+    #toast.warn    { background:rgba(255,145,0,0.15);  border:1px solid var(--orange); color:var(--orange); }
+    #toast.error   { background:rgba(255,71,87,0.15);  border:1px solid var(--red); color:var(--red); }
+    #toast.info    { background:rgba(156,111,255,0.15);border:1px solid var(--purple-d); color:var(--purple); }
+
+    /* ── MAIN WRAPPER ── */
+    .auth-wrap {
+      position:relative; z-index:1;
+      width:100%; max-width:420px;
+    }
+
+    /* ── LOGO + BRAND ── */
+    .brand {
+      text-align:center; margin-bottom:28px;
+      animation:rv .6s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    .brand-logo {
+      width:72px; height:72px; border-radius:50%;
+      border:3px solid var(--gold);
+      box-shadow:0 0 24px rgba(245,197,24,0.4);
+      overflow:hidden; background:var(--card2);
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 14px;
+      animation:logo-float 3s ease-in-out infinite;
+    }
+    @keyframes logo-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+    .brand-logo img { width:100%; height:100%; object-fit:cover; display:block; }
+    .brand-logo .lf { font-family:'Orbitron',sans-serif; font-size:22px; font-weight:900; color:var(--gold); display:none; }
+    .brand-title {
+      font-family:'Orbitron',sans-serif; font-weight:900;
+      font-size:clamp(18px,5vw,24px); letter-spacing:1px;
+      background:linear-gradient(90deg,var(--gold),var(--gold2),var(--orange),var(--gold));
+      background-size:300%; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      animation:shimmer 3s linear infinite;
+    }
+    @keyframes shimmer { 0%{background-position:0%} 100%{background-position:300%} }
+    .brand-sub { font-size:13px; color:var(--gray); margin-top:6px; line-height:1.5; }
+
+    /* ── AUTH CARD ── */
+    .auth-card {
+      background:var(--card); border-radius:24px;
+      border:1px solid rgba(156,111,255,0.2);
+      padding:28px 22px;
+      box-shadow:0 16px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
+      position:relative; overflow:hidden;
+      animation:rv .55s .08s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    .auth-card::before {
+      content:''; position:absolute; top:-40%; left:-20%; width:140%; height:180%;
+      background:
+        radial-gradient(ellipse at 25% 40%, rgba(156,111,255,0.1) 0%, transparent 55%),
+        radial-gradient(ellipse at 75% 60%, rgba(245,197,24,0.07) 0%, transparent 55%);
+      animation:orb 8s ease-in-out infinite alternate; pointer-events:none;
+    }
+    @keyframes orb { 0%{transform:translate(0,0)} 100%{transform:translate(8px,-6px)} }
+
+    /* ── TABS ── */
+    .tabs {
+      display:flex; background:var(--card2); border-radius:14px;
+      padding:4px; margin-bottom:24px; position:relative; z-index:1;
+    }
+    .tab-btn {
+      flex:1; padding:10px; border:none; border-radius:10px;
+      background:transparent; color:var(--gray);
+      font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700;
+      cursor:pointer; transition:all .2s; letter-spacing:.5px;
+    }
+    .tab-btn.active {
+      background:linear-gradient(135deg,var(--purple-d),var(--gold));
+      color:#000;
+      box-shadow:0 4px 14px rgba(156,111,255,0.35);
+    }
+
+    /* ── PANELS ── */
+    .panel { display:none; }
+    .panel.active { display:block; animation:rv .4s cubic-bezier(.22,.68,0,1.2) both; }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom:14px; position:relative; }
+    .form-group label {
+      display:block; font-size:11px; font-weight:700; color:var(--gray);
+      letter-spacing:.8px; text-transform:uppercase; margin-bottom:7px;
+    }
+    .input-wrap {
+      display:flex; align-items:center;
+      background:var(--card2); border:1.5px solid var(--border);
+      border-radius:13px; overflow:hidden; transition:border-color .2s, box-shadow .2s;
+    }
+    .input-wrap:focus-within {
+      border-color:rgba(156,111,255,0.55);
+      box-shadow:0 0 0 3px rgba(156,111,255,0.1);
+    }
+    .input-icon { padding:0 12px; font-size:18px; flex-shrink:0; }
+    .input-wrap input {
+      flex:1; background:transparent; border:none; outline:none;
+      color:var(--white); font-size:15px; font-weight:600;
+      font-family:'Rajdhani',sans-serif; padding:13px 12px 13px 0;
+    }
+    .input-wrap input::placeholder { color:var(--gray2); }
+    .toggle-pass {
+      padding:0 14px; font-size:16px; cursor:pointer;
+      background:none; border:none; color:var(--gray);
+      transition:color .2s;
+    }
+    .toggle-pass:hover { color:var(--white); }
+
+    /* ── PRIMARY BTN ── */
+    .primary-btn {
+      width:100%; padding:15px; border:none; border-radius:15px;
+      background:linear-gradient(135deg,var(--purple-d),var(--gold));
+      background-size:200%;
+      color:#000; font-family:'Orbitron',sans-serif;
+      font-size:13px; font-weight:900; letter-spacing:.5px;
+      cursor:pointer; position:relative; overflow:hidden;
+      animation:btn-shadow 2s ease-in-out infinite;
+      transition:transform .15s; margin-top:4px;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    @keyframes btn-shadow {
+      0%,100%{box-shadow:0 6px 24px rgba(156,111,255,0.3)}
+      50%{box-shadow:0 8px 36px rgba(156,111,255,0.55),0 0 0 6px rgba(156,111,255,0.08)}
+    }
+    .primary-btn::after {
+      content:''; position:absolute; top:0; left:-100%; width:55%; height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
+      animation:sweep 2.5s ease-in-out infinite;
+    }
+    @keyframes sweep { 0%{left:-100%} 60%,100%{left:150%} }
+    .primary-btn:active { transform:scale(.98); }
+    .primary-btn:disabled { opacity:.5; cursor:not-allowed; animation:none; }
+
+    /* ── OR DIVIDER ── */
+    .or-row {
+      display:flex; align-items:center; gap:10px;
+      margin:18px 0; color:var(--gray); font-size:12px; font-weight:700; letter-spacing:1px;
+    }
+    .or-row::before,.or-row::after { content:''; flex:1; height:1px; background:var(--border); }
+
+    /* ── GOOGLE BTN ── */
+    .google-btn {
+      width:100%; padding:14px 16px; border-radius:15px;
+      background:var(--card2); border:1.5px solid var(--border);
+      color:var(--white); font-family:'Rajdhani',sans-serif;
+      font-size:14px; font-weight:800; letter-spacing:.3px;
+      cursor:pointer; display:flex; align-items:center; justify-content:center; gap:12px;
+      transition:all .2s; position:relative; overflow:hidden;
+    }
+    .google-btn:hover { border-color:rgba(255,255,255,0.2); background:var(--card3); transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.3); }
+    .google-btn:active { transform:scale(.98); }
+    .google-btn .g-icon {
+      width:22px; height:22px; flex-shrink:0;
+    }
+
+    /* ── FORGOT / SWITCH ── */
+    .forgot-link {
+      display:block; text-align:right; font-size:12px; color:var(--purple);
+      text-decoration:none; margin-top:-6px; margin-bottom:14px;
+      font-weight:700; cursor:pointer;
+    }
+    .forgot-link:hover { color:var(--gold); }
+    .switch-row {
+      text-align:center; margin-top:18px; font-size:13px; color:var(--gray);
+    }
+    .switch-row a { color:var(--gold); font-weight:700; cursor:pointer; text-decoration:none; }
+    .switch-row a:hover { color:var(--gold2); }
+
+    /* ── FORGOT PASSWORD PANEL ── */
+    #forgotPanel {
+      display:none; animation:rv .4s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    #forgotPanel.active { display:block; }
+    .back-btn {
+      display:flex; align-items:center; gap:6px;
+      background:none; border:none; color:var(--gray);
+      font-size:13px; font-weight:700; cursor:pointer;
+      margin-bottom:18px; padding:0;
+      font-family:'Rajdhani',sans-serif;
+      transition:color .2s;
+    }
+    .back-btn:hover { color:var(--white); }
+
+    /* ── SPINNER ── */
+    .spinner {
+      width:18px; height:18px;
+      border:2px solid rgba(0,0,0,0.25);
+      border-top-color:#000; border-radius:50%;
+      animation:spin .65s linear infinite; flex-shrink:0;
+    }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .hidden { display:none !important; }
+
+    /* ── PASSWORD STRENGTH ── */
+    .strength-bar { height:4px; border-radius:4px; background:var(--border); margin-top:7px; overflow:hidden; }
+    .strength-fill { height:100%; border-radius:4px; width:0%; transition:width .3s, background .3s; }
+    .strength-text { font-size:10px; color:var(--gray); margin-top:4px; }
+
+    /* ── TERMS ── */
+    .terms-note { font-size:11px; color:var(--gray); text-align:center; margin-top:14px; line-height:1.55; }
+    .terms-note a { color:var(--purple); text-decoration:none; }
+
+    /* ── KEYFRAMES ── */
+    @keyframes rv { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  </style>
+</head>
+<body>
+
+<div id="toast" class="toast hidden"></div>
+
+<div class="auth-wrap">
+
+  <!-- BRAND -->
+  <div class="brand">
+    <div class="brand-logo">
+      <img src="https://raw.githubusercontent.com/akans47g/Lucky/main/logo.jpg" alt="Logo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';"/>
+      <span class="lf">SP</span>
+    </div>
+    <div class="brand-title">SignalPro AI</div>
+    <div class="brand-sub">1-Minute AI Signal · Big / Small · Profit Guaranteed</div>
+  </div>
+
+  <!-- AUTH CARD -->
+  <div class="auth-card">
+
+    <!-- TABS -->
+    <div class="tabs" id="authTabs">
+      <button class="tab-btn active" onclick="switchTab('login')">🔐 Login</button>
+      <button class="tab-btn" onclick="switchTab('signup')">✨ Sign Up</button>
+    </div>
+
+    <!-- ══ LOGIN PANEL ══ -->
+    <div class="panel active" id="loginPanel">
+
+      <!-- Google Login -->
+      <button class="google-btn" id="googleLoginBtn">
+        <svg class="g-icon" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="or-row"><span>OR</span></div>
+
+      <!-- Email Login -->
+      <div class="form-group">
+        <label>Email Address</label>
+        <div class="input-wrap">
+          <span class="input-icon">📧</span>
+          <input type="email" id="loginEmail" placeholder="apna@gmail.com" autocomplete="email"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrap">
+          <span class="input-icon">🔑</span>
+          <input type="password" id="loginPass" placeholder="Password dalo" autocomplete="current-password"/>
+          <button class="toggle-pass" onclick="togglePass('loginPass', this)">👁</button>
+        </div>
+      </div>
+
+      <span class="forgot-link" onclick="showForgot()">Forgot Password?</span>
+
+      <button class="primary-btn" id="loginBtn">
+        <span id="loginBtnText">🔐 Login</span>
+        <span id="loginSpinner" class="spinner hidden"></span>
+      </button>
+
+      <div class="switch-row">
+        Account nahi hai? <a onclick="switchTab('signup')">Sign Up karo</a>
+      </div>
+    </div>
+
+    <!-- ══ SIGNUP PANEL ══ -->
+    <div class="panel" id="signupPanel">
+
+      <!-- Google Signup -->
+      <button class="google-btn" id="googleSignupBtn">
+        <svg class="g-icon" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Sign up with Google
+      </button>
+
+      <div class="or-row"><span>OR</span></div>
+
+      <div class="form-group">
+        <label>Full Name</label>
+        <div class="input-wrap">
+          <span class="input-icon">👤</span>
+          <input type="text" id="signupName" placeholder="Aapka naam" autocomplete="name"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Email Address</label>
+        <div class="input-wrap">
+          <span class="input-icon">📧</span>
+          <input type="email" id="signupEmail" placeholder="apna@gmail.com" autocomplete="email"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrap">
+          <span class="input-icon">🔑</span>
+          <input type="password" id="signupPass" placeholder="Min 6 characters" autocomplete="new-password"
+                 oninput="checkStrength(this.value)"/>
+          <button class="toggle-pass" onclick="togglePass('signupPass', this)">👁</button>
+        </div>
+        <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+        <div class="strength-text" id="strengthText"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="signupPassConfirm" placeholder="Password dobara dalo" autocomplete="new-password"/>
+          <button class="toggle-pass" onclick="togglePass('signupPassConfirm', this)">👁</button>
+        </div>
+      </div>
+
+      <button class="primary-btn" id="signupBtn">
+        <span id="signupBtnText">✨ Create Account</span>
+        <span id="signupSpinner" class="spinner hidden"></span>
+      </button>
+
+      <div class="switch-row">
+        Pehle se account hai? <a onclick="switchTab('login')">Login karo</a>
+      </div>
+
+      <div class="terms-note">
+        Account banake aap hamare <a href="#">Terms</a> aur <a href="#">Privacy Policy</a> se agree karte ho.
+      </div>
+    </div>
+
+    <!-- ══ FORGOT PASSWORD PANEL ══ -->
+    <div id="forgotPanel">
+      <button class="back-btn" onclick="hideForgot()">← Back</button>
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:40px">🔑</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:var(--white);margin:8px 0 4px">Forgot Password?</div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.5">Email dalo — reset link bhejenge</div>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <div class="input-wrap">
+          <span class="input-icon">📧</span>
+          <input type="email" id="resetEmail" placeholder="apna@gmail.com"/>
+        </div>
+      </div>
+      <button class="primary-btn" id="resetBtn">
+        <span id="resetBtnText">📨 Send Reset Link</span>
+        <span id="resetSpinner" class="spinner hidden"></span>
+      </button>
+    </div>
+
+  </div><!-- /auth-card -->
+</div><!-- /auth-wrap -->
+
+<!-- ══ FIREBASE ══ -->
+<script type="module">
+import { initializeApp }     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth,
+         GoogleAuthProvider,
+         signInWithPopup,
+         signInWithEmailAndPassword,
+         createUserWithEmailAndPassword,
+         sendPasswordResetEmail,
+         updateProfile,
+         onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* ── CONFIG ── */
+const firebaseConfig = {
+  apiKey:            "AIzaSyDh_fzIv1_YLP6X8DzjFdXvvFQv2sciFzU",
+  authDomain:        "lucky-b3886.firebaseapp.com",
+  projectId:         "lucky-b3886",
+  storageBucket:     "lucky-b3886.firebasestorage.app",
+  messagingSenderId: "314352804588",
+  appId:             "1:314352804588:web:96697e2668a95c19affbc9"
+};
+
+const app      = initializeApp(firebaseConfig);
+const auth     = getAuth(app);
+const db       = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+/* ── Already logged in? → redirect ── */
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    saveLocal(user);
+    window.location.replace("index.html");
+  }
+});
+
+/* ── Save user to localStorage + Firestore ── */
+async function saveLocal(user) {
+  localStorage.setItem("sp_uid",    user.uid);
+  localStorage.setItem("sp_name",   user.displayName || "SignalPro User");
+  localStorage.setItem("sp_email",  user.email || "");
+  localStorage.setItem("sp_avatar", user.photoURL || "");
+}
+
+async function ensureUserDoc(user) {
+  const ref = doc(db, "users", user.uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    await setDoc(ref, {
+      uid:       user.uid,
+      name:      user.displayName || "SignalPro User",
+      email:     user.email || "",
+      avatar:    user.photoURL || "",
+      coins:     0,
+      plan:      "free",
+      createdAt: serverTimestamp(),
+    });
+  } else {
+    /* Update name/avatar if changed */
+    const data = snap.data();
+    localStorage.setItem("sp_coins", data.coins || 0);
+    localStorage.setItem("sp_plan",  data.plan  || "free");
+  }
+}
+
+/* ── GOOGLE AUTH ── */
+async function googleAuth() {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    await saveLocal(result.user);
+    await ensureUserDoc(result.user);
+    showToast("✅ Google se login ho gaya!", "success");
+    setTimeout(() => window.location.replace("index.html"), 800);
+  } catch (err) {
+    console.error(err);
+    if (err.code === "auth/popup-closed-by-user") {
+      showToast("Popup band kar diya — dobara try karo", "warn");
+    } else {
+      showToast("❌ Google login failed: " + err.message, "error");
+    }
+  }
+}
+document.getElementById("googleLoginBtn").addEventListener("click",  googleAuth);
+document.getElementById("googleSignupBtn").addEventListener("click", googleAuth);
+
+/* ── EMAIL LOGIN ── */
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const email = document.getElementById("loginEmail").value.trim();
+  const pass  = document.getElementById("loginPass").value;
+
+  if (!email || !pass) { showToast("Email aur password dono bharo ⚡", "warn"); return; }
+
+  setLoading("login", true);
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, pass);
+    await saveLocal(cred.user);
+    await ensureUserDoc(cred.user);
+    showToast("✅ Login successful!", "success");
+    setTimeout(() => window.location.replace("index.html"), 800);
+  } catch (err) {
+    console.error(err);
+    const msg = friendlyError(err.code);
+    showToast("❌ " + msg, "error");
+  } finally {
+    setLoading("login", false);
+  }
+});
+
+/* ── EMAIL SIGNUP ── */
+document.getElementById("signupBtn").addEventListener("click", async () => {
+  const name  = document.getElementById("signupName").value.trim();
+  const email = document.getElementById("signupEmail").value.trim();
+  const pass  = document.getElementById("signupPass").value;
+  const conf  = document.getElementById("signupPassConfirm").value;
+
+  if (!name)             { showToast("Apna naam dalo 👤", "warn"); return; }
+  if (!email)            { showToast("Email dalo 📧", "warn"); return; }
+  if (pass.length < 6)   { showToast("Password min 6 characters hona chahiye 🔑", "warn"); return; }
+  if (pass !== conf)     { showToast("Passwords match nahi karte ❌", "warn"); return; }
+
+  setLoading("signup", true);
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await updateProfile(cred.user, { displayName: name });
+    await saveLocal({ ...cred.user, displayName: name });
+    await ensureUserDoc({ ...cred.user, displayName: name });
+    showToast("🎉 Account ban gaya! Welcome " + name, "success");
+    setTimeout(() => window.location.replace("index.html"), 900);
+  } catch (err) {
+    console.error(err);
+    showToast("❌ " + friendlyError(err.code), "error");
+  } finally {
+    setLoading("signup", false);
+  }
+});
+
+/* ── PASSWORD RESET ── */
+document.getElementById("resetBtn").addEventListener("click", async () => {
+  const email = document.getElementById("resetEmail").value.trim();
+  if (!email) { showToast("Email dalo 📧", "warn"); return; }
+
+  const btn = document.getElementById("resetBtn");
+  const txt = document.getElementById("resetBtnText");
+  const sp  = document.getElementById("resetSpinner");
+  btn.disabled = true; txt.textContent = "Sending…"; sp.classList.remove("hidden");
+
+  try {
+    await sendPasswordResetEmail(auth, email);
+    showToast("📨 Reset link bhej diya — email check karo!", "success");
+    setTimeout(() => hideForgot(), 1500);
+  } catch (err) {
+    showToast("❌ " + friendlyError(err.code), "error");
+  } finally {
+    btn.disabled = false; txt.textContent = "📨 Send Reset Link"; sp.classList.add("hidden");
+  }
+});
+
+/* ── FRIENDLY ERROR MESSAGES ── */
+function friendlyError(code) {
+  const map = {
+    "auth/user-not-found":       "Yeh email registered nahi hai",
+    "auth/wrong-password":       "Password galat hai",
+    "auth/email-already-in-use": "Yeh email pehle se use ho rahi hai",
+    "auth/invalid-email":        "Valid email dalo",
+    "auth/weak-password":        "Password aur strong banao",
+    "auth/too-many-requests":    "Zyada attempts — thodi der baad try karo",
+    "auth/network-request-failed": "Internet check karo",
+    "auth/invalid-credential":   "Email ya password galat hai",
+  };
+  return map[code] || "Kuch galat hua — dobara try karo";
+}
+
+/* ── LOADING STATE ── */
+function setLoading(type, on) {
+  const btn = document.getElementById(type + "Btn");
+  const txt = document.getElementById(type + "BtnText");
+  const sp  = document.getElementById(type + "Spinner");
+  btn.disabled   = on;
+  txt.textContent = on ? "Please wait…" : (type === "login" ? "🔐 Login" : "✨ Create Account");
+  sp.classList.toggle("hidden", !on);
+}
+</script>
+
+<!-- ══ UI HELPERS (non-module) ══ -->
+<script>
+function switchTab(tab) {
+  document.getElementById("loginPanel").classList.toggle("active",  tab === "login");
+  document.getElementById("signupPanel").classList.toggle("active", tab === "signup");
+  document.getElementById("forgotPanel").classList.remove("active");
+  document.getElementById("authTabs").style.display = "flex";
+  document.querySelectorAll(".tab-btn").forEach((b, i) => {
+    b.classList.toggle("active", (i === 0 && tab === "login") || (i === 1 && tab === "signup"));
+  });
+}
+
+function showForgot() {
+  document.getElementById("loginPanel").classList.remove("active");
+  document.getElementById("signupPanel").classList.remove("active");
+  document.getElementById("authTabs").style.display = "none";
+  document.getElementById("forgotPanel").classList.add("active");
+}
+
+function hideForgot() {
+  document.getElementById("forgotPanel").classList.remove("active");
+  document.getElementById("authTabs").style.display = "flex";
+  switchTab("login");
+}
+
+function togglePass(id, btn) {
+  const inp = document.getElementById(id);
+  if (inp.type === "password") { inp.type = "text";     btn.textContent = "🙈"; }
+  else                         { inp.type = "password"; btn.textContent = "👁"; }
+}
+
+function checkStrength(val) {
+  const fill = document.getElementById("strengthFill");
+  const text = document.getElementById("strengthText");
+  if (!val) { fill.style.width = "0%"; text.textContent = ""; return; }
+  let score = 0;
+  if (val.length >= 6)  score++;
+  if (val.length >= 10) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^a-zA-Z0-9]/.test(val)) score++;
+  const levels = [
+    { w:"20%", c:"#ff4757", t:"Bahut weak" },
+    { w:"40%", c:"#ff9100", t:"Weak" },
+    { w:"60%", c:"#ffd740", t:"Medium" },
+    { w:"80%", c:"#00e676", t:"Strong" },
+    { w:"100%",c:"#00e676", t:"Very Strong 💪" },
+  ];
+  const l = levels[score - 1] || levels[0];
+  fill.style.width      = l.w;
+  fill.style.background = l.c;
+  text.textContent      = l.t;
+  text.style.color      = l.c;
+}
+
+function showToast(msg, type = "info") {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.className = `toast ${type}`;
+  toast.classList.remove("hidden");
+  void toast.offsetWidth;
+  toast.classList.add("show");
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.classList.add("hidden"), 400);
+  }, 3200);
+}
+
+/* Enter key support */
+document.addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  const lp = document.getElementById("loginPanel");
+  const sp = document.getElementById("signupPanel");
+  const fp = document.getElementById("forgotPanel");
+  if (lp.classList.contains("active"))      document.getElementById("loginBtn").click();
+  else if (sp.classList.contains("active")) document.getElementById("signupBtn").click();
+  else if (fp.classList.contains("active")) document.getElementById("resetBtn").click();
+});
+</script>
+
+</body>
+</html>
