@@ -12,12 +12,12 @@ import { getAuth, onAuthStateChanged }
 
 /* ── 🔥 FIREBASE CONFIG — apna config yahan paste karo ── */
 const firebaseConfig = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT.firebaseapp.com",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID"
+  apiKey:            "AIzaSyDh_fzIv1_YLP6X8DzjFdXvvFQv2sciFzU",
+  authDomain:        "lucky-b3886.firebaseapp.com",
+  projectId:         "lucky-b3886",
+  storageBucket:     "lucky-b3886.firebasestorage.app",
+  messagingSenderId: "314352804588",
+  appId:             "1:314352804588:web:96697e2668a95c19affbc9"
 };
 
 /* ── INIT ── */
