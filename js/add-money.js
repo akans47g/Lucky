@@ -46,7 +46,7 @@ function setSubmitLoading(loading) {
   const spinner = document.getElementById("submitBtnSpinner");
   if (!btn) return;
   btn.disabled = loading;
-  txtEl.textContent    = loading ? "Submitting…" : "Submit Request 🚀";
+  txtEl.textContent = loading ? "Submitting…" : "Submit Request 🚀";
   spinner.classList.toggle("hidden", !loading);
 }
 
@@ -114,7 +114,6 @@ async function handleSubmit(uid, userEmail) {
   const utr     = document.getElementById("utr")?.value?.trim();
   const app_val = document.getElementById("paymentApp")?.value || "UPI";
 
-  /* Validation */
   if (!amount || Number(amount) < 25) {
     showToast("Pehle amount select karo (min ₹25) ⚡", "warn"); return;
   }
@@ -127,18 +126,17 @@ async function handleSubmit(uid, userEmail) {
   try {
     await addDoc(collection(db, "addMoneyRequests"), {
       uid,
-      email:     userEmail || "",
-      amount:    Number(amount),
-      coins:     Number(amount),     /* 1 ₹ = 1 coin */
+      email:      userEmail || "",
+      amount:     Number(amount),
+      coins:      Number(amount),
       utr,
       paymentApp: app_val,
-      status:    "pending",
-      createdAt: serverTimestamp(),
+      status:     "pending",
+      createdAt:  serverTimestamp(),
     });
 
     showToast("✅ Request submit ho gayi! 2-15 min mein coins milenge.", "success");
 
-    /* Reset form */
     document.getElementById("amount").value        = "";
     document.getElementById("amountConfirm").value = "";
     document.getElementById("utr").value           = "";
@@ -146,7 +144,6 @@ async function handleSubmit(uid, userEmail) {
     document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
     document.getElementById("amountPreview")?.classList.add("hidden");
 
-    /* Reload history */
     await loadHistory(uid);
 
   } catch (err) {
@@ -157,24 +154,34 @@ async function handleSubmit(uid, userEmail) {
   }
 }
 
-/* ── AUTH GATE ── */
+/* ── AUTH GATE — FIX: Firebase init hone ka wait karo ── */
 onAuthStateChanged(auth, (user) => {
   if (!user) {
-    /* Not logged in — redirect to login/home */
-    window.location.href = "index.html";
+    /*
+     * Firebase pehli baar initialize hote waqt null return karta hai
+     * even agar user logged in ho. Isliye redirect NAHI karna yahan.
+     * Sirf submit karne pe uid check karega — page freely use hoga.
+     */
+    const list = document.getElementById("historyList");
+    if (list) list.innerHTML = `<div class="hist-empty">📭 Login karke history dekhein</div>`;
+
+    document.getElementById("submitBtn")?.addEventListener("click", () => {
+      showToast("⚠️ Pehle login karo", "warn");
+      setTimeout(() => { window.location.href = "index.html"; }, 1500);
+    });
     return;
   }
 
-  /* Save user info to localStorage for account page */
+  /* User logged in — save to localStorage */
   localStorage.setItem("sp_uid",    user.uid);
-  localStorage.setItem("sp_name",   user.displayName  || "SignalPro User");
-  localStorage.setItem("sp_email",  user.email        || "");
-  localStorage.setItem("sp_avatar", user.photoURL     || "");
+  localStorage.setItem("sp_name",   user.displayName || "SignalPro User");
+  localStorage.setItem("sp_email",  user.email       || "");
+  localStorage.setItem("sp_avatar", user.photoURL    || "");
 
   /* Load history */
   loadHistory(user.uid);
 
-  /* Submit listener */
+  /* Submit */
   document.getElementById("submitBtn")?.addEventListener("click", () => {
     handleSubmit(user.uid, user.email);
   });
