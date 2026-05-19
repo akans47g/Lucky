@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ratings & Reviews | SignalPro AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#14142a;--card:#1e1e38;--card2:#26264a;--card3:#2e2e58;--border:rgba(255,255,255,0.08);--gold:#f5c518;--gold2:#ffd740;--green:#00e676;--red:#ff4757;--purple:#ce93d8;--purple-d:#9c6fff;--orange:#ff9100;--cyan:#00bcd4;--white:#f4f4ff;--gray:#9090b8;--gray2:#4a4a78;--nav-h:66px}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--white);font-family:'Rajdhani','Noto Sans Devanagari',sans-serif;min-height:100vh;padding-bottom:calc(var(--nav-h) + 10px);overflow-x:hidden}
+    body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(circle,rgba(156,111,255,0.06) 1px,transparent 1px);background-size:28px 28px}
+
+    #toast{position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:999;padding:11px 22px;border-radius:12px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;max-width:90vw;text-align:center}
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    #toast.hidden{display:none}
+    #toast.success{background:rgba(0,230,118,0.15);border:1px solid var(--green);color:var(--green)}
+    #toast.warn{background:rgba(255,145,0,0.15);border:1px solid var(--orange);color:var(--orange)}
+    #toast.error{background:rgba(255,71,87,0.15);border:1px solid var(--red);color:var(--red)}
+    #toast.info{background:rgba(156,111,255,0.15);border:1px solid var(--purple-d);color:var(--purple)}
+
+    header{position:sticky;top:0;z-index:200;height:60px;background:rgba(20,20,42,0.96);backdrop-filter:blur(20px);border-bottom:1px solid rgba(245,197,24,0.3);display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 4px 24px rgba(0,0,0,0.4)}
+    .hd-left{display:flex;align-items:center;gap:8px}
+    .live-pill{display:flex;align-items:center;gap:5px;background:rgba(0,230,118,0.12);border:1px solid rgba(0,230,118,0.38);border-radius:20px;padding:3px 10px}
+    .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:lp 1.3s ease-in-out infinite}
+    @keyframes lp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.5}}
+    .live-text{font-size:10px;color:var(--green);font-weight:700;letter-spacing:1.5px}
+    .hd-title{font-family:'Orbitron',sans-serif;font-size:clamp(11px,2.8vw,15px);font-weight:900;letter-spacing:1px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--orange),var(--gold));background-size:300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 3s linear infinite}
+    @keyframes shimmer{0%{background-position:0%}100%{background-position:300%}}
+    .hd-logo{width:40px;height:40px;border-radius:50%;border:2px solid var(--gold);box-shadow:0 0 12px rgba(245,197,24,0.4);overflow:hidden;background:var(--card2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .hd-logo img{width:100%;height:100%;object-fit:cover;display:block}
+    .hd-logo .lf{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:900;color:var(--gold);display:none}
+
+    main{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:16px 14px 10px}
+
+    .verified-bar{background:var(--card);border-radius:16px;border:1px solid rgba(0,230,118,0.2);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;animation:rv .5s cubic-bezier(.22,.68,0,1.2) both}
+    .vb-left{display:flex;align-items:center;gap:10px}
+    .vb-dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:lp 1.3s ease-in-out infinite}
+    .vb-name{font-size:15px;font-weight:800;color:var(--white)}
+    .vb-check{font-size:11px;color:var(--green);font-weight:700;margin-top:2px}
+    .vb-logo{width:42px;height:42px;border-radius:12px;border:1.5px solid rgba(245,197,24,0.3);overflow:hidden;background:var(--card2);display:flex;align-items:center;justify-content:center}
+    .vb-logo img{width:100%;height:100%;object-fit:cover}
+    .vb-logo .lf2{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:900;color:var(--gold)}
+
+    .rating-hero{text-align:center;margin-bottom:14px;animation:rv .5s .06s cubic-bezier(.22,.68,0,1.2) both}
+    .rating-hero h1{font-size:22px;font-weight:800;color:var(--white)}
+    .rating-hero p{font-size:13px;color:var(--gray);margin-top:4px}
+
+    .score-card{background:var(--card);border-radius:20px;border:1px solid var(--border);padding:20px 18px;margin-bottom:14px;animation:rv .5s .10s cubic-bezier(.22,.68,0,1.2) both}
+    .score-top{display:flex;align-items:center;gap:18px;margin-bottom:16px}
+    .score-big{font-family:'Orbitron',sans-serif;font-size:52px;font-weight:900;color:var(--gold);line-height:1;animation:ng 2.5s ease-in-out infinite alternate}
+    @keyframes ng{from{text-shadow:0 0 15px rgba(245,197,24,0.3)}to{text-shadow:0 0 40px rgba(245,197,24,0.7)}}
+    .score-stars{font-size:22px;letter-spacing:2px}
+    .score-count{font-size:13px;color:var(--gray);margin-top:4px}
+    .bar-list{display:flex;flex-direction:column;gap:7px}
+    .bar-row{display:flex;align-items:center;gap:8px}
+    .bar-label{font-size:12px;color:var(--gray);width:22px;text-align:right;flex-shrink:0}
+    .bar-track{flex:1;height:7px;background:rgba(255,255,255,0.07);border-radius:10px;overflow:hidden}
+    .bar-fill{height:100%;border-radius:10px;transition:width 1.2s ease;width:0%}
+    .bar-row:nth-child(1) .bar-fill{background:linear-gradient(90deg,var(--gold),var(--orange))}
+    .bar-row:nth-child(2) .bar-fill{background:linear-gradient(90deg,var(--green),#00c853)}
+    .bar-row:nth-child(3) .bar-fill{background:linear-gradient(90deg,var(--cyan),#0097a7)}
+    .bar-row:nth-child(4) .bar-fill{background:linear-gradient(90deg,var(--purple-d),#7b1fa2)}
+    .bar-row:nth-child(5) .bar-fill{background:linear-gradient(90deg,var(--red),#c62828)}
+    .bar-num{font-size:12px;color:var(--gray);width:22px;flex-shrink:0}
+
+    .give-rating{background:var(--card);border-radius:20px;border:1px solid rgba(156,111,255,0.2);padding:20px 18px;margin-bottom:14px;position:relative;overflow:hidden;animation:rv .5s .14s cubic-bezier(.22,.68,0,1.2) both}
+    .give-rating::before{content:'';position:absolute;top:-40%;left:-20%;width:140%;height:180%;background:radial-gradient(ellipse at 50% 50%,rgba(156,111,255,0.07) 0%,transparent 65%);pointer-events:none}
+    .give-title{font-size:17px;font-weight:800;color:var(--white);margin-bottom:14px;position:relative}
+    .star-input{display:flex;gap:8px;margin-bottom:6px;position:relative}
+    .star-input .si{font-size:34px;cursor:pointer;transition:transform .15s;filter:grayscale(1) opacity(0.35);user-select:none}
+    .star-input .si.lit{filter:none;transform:scale(1.1)}
+    .star-input .si:hover{transform:scale(1.2)}
+    .star-hint{font-size:12px;color:var(--gray);margin-bottom:14px;position:relative}
+    .review-textarea{width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:13px;padding:13px 14px;color:var(--white);font-size:14px;font-family:'Rajdhani',sans-serif;resize:none;min-height:90px;outline:none;transition:border-color .2s}
+    .review-textarea:focus{border-color:rgba(156,111,255,0.5);box-shadow:0 0 0 3px rgba(156,111,255,0.08)}
+    .char-count{text-align:right;font-size:11px;color:var(--gray);margin-top:5px}
+    .submit-review-btn{width:100%;margin-top:14px;padding:14px;border:none;border-radius:15px;background:linear-gradient(135deg,var(--purple-d),var(--gold));background-size:200%;color:#000;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;letter-spacing:.5px;cursor:pointer;position:relative;overflow:hidden;transition:transform .15s;animation:bs 2s ease-in-out infinite;display:flex;align-items:center;justify-content:center;gap:8px}
+    @keyframes bs{0%,100%{box-shadow:0 6px 24px rgba(156,111,255,0.25)}50%{box-shadow:0 8px 36px rgba(156,111,255,0.5),0 0 0 6px rgba(156,111,255,0.07)}}
+    .submit-review-btn::after{content:'';position:absolute;top:0;left:-100%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);animation:sw 2.5s ease-in-out infinite}
+    @keyframes sw{0%{left:-100%}60%,100%{left:150%}}
+    .submit-review-btn:active{transform:scale(.98)}
+    .submit-review-btn:disabled{opacity:.5;cursor:not-allowed;animation:none}
+    .spinner{width:17px;height:17px;border:2px solid rgba(0,0,0,0.25);border-top-color:#000;border-radius:50%;animation:spin .65s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .hidden{display:none!important}
+
+    .search-filter{margin-bottom:14px;animation:rv .5s .18s cubic-bezier(.22,.68,0,1.2) both}
+    .search-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:11px 14px;margin-bottom:10px;transition:border-color .2s}
+    .search-box:focus-within{border-color:rgba(156,111,255,0.45)}
+    .search-box input{flex:1;background:transparent;border:none;outline:none;color:var(--white);font-size:14px;font-family:'Rajdhani',sans-serif}
+    .search-box input::placeholder{color:var(--gray2)}
+    .filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+    .filter-row::-webkit-scrollbar{display:none}
+    .filter-btn{flex-shrink:0;padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--gray);font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap;font-family:'Rajdhani',sans-serif}
+    .filter-btn.active{background:var(--gold);border-color:var(--gold);color:#000}
+    .filter-btn:hover{border-color:rgba(245,197,24,0.4);color:var(--white)}
+
+    .review-card{background:var(--card);border-radius:18px;border:1px solid var(--border);padding:16px 16px 12px;margin-bottom:10px;position:relative;overflow:hidden;animation:rv .45s cubic-bezier(.22,.68,0,1.2) both;transition:border-color .2s}
+    .review-card:hover{border-color:rgba(255,255,255,0.13)}
+    .review-card::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0}
+    .review-card.star5::before{background:linear-gradient(180deg,var(--gold),var(--orange))}
+    .review-card.star4::before{background:linear-gradient(180deg,var(--green),#00c853)}
+    .review-card.star3::before{background:linear-gradient(180deg,var(--cyan),#0097a7)}
+    .review-card.star2::before{background:linear-gradient(180deg,var(--purple-d),#7b1fa2)}
+    .review-card.star1::before{background:linear-gradient(180deg,var(--red),#c62828)}
+    .rc-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+    .rc-avatar{width:40px;height:40px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;color:#fff}
+    .rc-info{flex:1;min-width:0}
+    .rc-name-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .rc-name{font-size:14px;font-weight:800;color:var(--white)}
+    .rc-date{font-size:11px;color:var(--gray);margin-top:2px}
+    .rc-stars{font-size:14px;letter-spacing:1px;margin-bottom:8px}
+    .rc-text{font-size:13px;color:rgba(240,240,248,0.85);line-height:1.6}
+    .rc-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+    .helpful-btn{display:flex;align-items:center;gap:5px;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:12px;font-weight:700;color:var(--gray);transition:all .18s;font-family:'Rajdhani',sans-serif}
+    .helpful-btn:hover{border-color:rgba(245,197,24,0.4);color:var(--gold)}
+    .helpful-btn.liked{background:rgba(245,197,24,0.1);border-color:rgba(245,197,24,0.4);color:var(--gold)}
+    .rc-score{font-size:12px;color:var(--gray2);font-weight:700}
+
+    .load-more-btn{width:100%;padding:13px;border-radius:14px;border:1.5px solid var(--border);background:var(--card);color:var(--gray);font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;transition:all .2s;font-family:'Rajdhani',sans-serif;letter-spacing:.5px}
+    .load-more-btn:hover{border-color:rgba(245,197,24,0.3);color:var(--gold)}
+
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);z-index:200;background:rgba(20,20,42,0.97);backdrop-filter:blur(20px);border-top:1px solid rgba(245,197,24,0.25);display:flex;align-items:stretch}
+    .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:none;border:none;cursor:pointer;color:var(--gray);font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;text-decoration:none;position:relative}
+    .nav-btn .ni{font-size:22px;line-height:1;transition:transform .2s}
+    .nav-btn.active{color:var(--green)}
+    .nav-btn.active .ni{transform:translateY(-2px)}
+    .nav-btn.active::after{content:'';position:absolute;top:0;left:15%;right:15%;height:2px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,transparent,var(--green),transparent)}
+
+    @keyframes rv{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+<div id="toast" class="toast hidden"></div>
+
+<header>
+  <div class="hd-left">
+    <div class="live-pill"><div class="live-dot"></div><span class="live-text">ACTIVE</span></div>
+  </div>
+  <div class="hd-title">Ratings & Reviews</div>
+  <div class="hd-logo">
+    <img src="https://raw.githubusercontent.com/akans47g/Lucky/main/logo.jpg" alt="Logo"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='block';"/>
+    <span class="lf">SP</span>
+  </div>
+</header>
+
+<main>
+  <div class="verified-bar">
+    <div class="vb-left">
+      <div class="vb-dot"></div>
+      <div>
+        <div class="vb-name">SignalPro AI</div>
+        <div class="vb-check">✅ Verified Business</div>
+      </div>
+    </div>
+    <div class="vb-logo">
+      <img src="https://raw.githubusercontent.com/akans47g/Lucky/main/logo.jpg" alt="Logo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"/>
+      <span class="lf2">SP</span>
+    </div>
+  </div>
+
+  <div class="rating-hero">
+    <h1>⭐ User Ratings</h1>
+    <p>Trusted by 1000+ users worldwide</p>
+  </div>
+
+  <div class="score-card">
+    <div class="score-top">
+      <div class="score-big" id="avgScore">4.8</div>
+      <div>
+        <div class="score-stars">⭐⭐⭐⭐⭐</div>
+        <div class="score-count" id="totalCount">55 reviews</div>
+      </div>
+    </div>
+    <div class="bar-list">
+      <div class="bar-row"><span class="bar-label">5⭐</span><div class="bar-track"><div class="bar-fill" id="bar5"></div></div><span class="bar-num" id="cnt5">43</span></div>
+      <div class="bar-row"><span class="bar-label">4⭐</span><div class="bar-track"><div class="bar-fill" id="bar4"></div></div><span class="bar-num" id="cnt4">8</span></div>
+      <div class="bar-row"><span class="bar-label">3⭐</span><div class="bar-track"><div class="bar-fill" id="bar3"></div></div><span class="bar-num" id="cnt3">4</span></div>
+      <div class="bar-row"><span class="bar-label">2⭐</span><div class="bar-track"><div class="bar-fill" id="bar2"></div></div><span class="bar-num" id="cnt2">0</span></div>
+      <div class="bar-row"><span class="bar-label">1⭐</span><div class="bar-track"><div class="bar-fill" id="bar1"></div></div><span class="bar-num" id="cnt1">0</span></div>
+    </div>
+  </div>
+
+  <div class="give-rating">
+    <div class="give-title">✍️ Give Your Rating</div>
+    <div class="star-input" id="starInput">
+      <span class="si" data-v="1">⭐</span>
+      <span class="si" data-v="2">⭐</span>
+      <span class="si" data-v="3">⭐</span>
+      <span class="si" data-v="4">⭐</span>
+      <span class="si" data-v="5">⭐</span>
+    </div>
+    <div class="star-hint" id="starHint">Tap a star to rate</div>
+    <textarea class="review-textarea" id="reviewText" placeholder="Write your feedback..." maxlength="300" oninput="document.getElementById('charNum').textContent=this.value.length"></textarea>
+    <div class="char-count"><span id="charNum">0</span>/300</div>
+    <button class="submit-review-btn" id="submitReviewBtn">
+      <span id="subBtnTxt">Submit Review</span>
+      <span id="subSpinner" class="spinner hidden"></span>
+    </button>
+  </div>
+
+  <div class="search-filter">
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="Search reviews..." oninput="filterReviews()"/>
+    </div>
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setFilter('all',this)">⭐ Top Rated</button>
+      <button class="filter-btn" onclick="setFilter('5',this)">5 Star</button>
+      <button class="filter-btn" onclick="setFilter('4',this)">4 Star</button>
+      <button class="filter-btn" onclick="setFilter('3',this)">3 Star</button>
+      <button class="filter-btn" onclick="setFilter('newest',this)">🆕 Newest</button>
+    </div>
+  </div>
+
+  <div id="reviewsList"></div>
+  <button class="load-more-btn hidden" id="loadMoreBtn" onclick="loadMore()">Load More Reviews ↓</button>
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav-btn" onclick="location.href='index.html'"><span class="ni">🏠</span>Home</button>
+  <button class="nav-btn" onclick="location.href='vip.html'"><span class="ni">💎</span>VIP Shot</button>
+  <button class="nav-btn active"><span class="ni">📊</span>Proof</button>
+  <button class="nav-btn" onclick="location.href='account.html'"><span class="ni">👤</span>Account</button>
+</nav>
+
+<script>
+/* ── Star input ── */
+let _star = 0;
+const hints = ['','Bahut bura 😞','Theek nahi 😕','Average 😐','Achha hai 😊','Zabardast! 🤩'];
+document.querySelectorAll('.si').forEach(s=>{
+  s.addEventListener('click',()=>{
+    _star=parseInt(s.dataset.v);
+    document.querySelectorAll('.si').forEach((x,i)=>x.classList.toggle('lit',i<_star));
+    document.getElementById('starHint').textContent=hints[_star];
+  });
+  s.addEventListener('mouseenter',()=>{
+    const v=parseInt(s.dataset.v);
+    document.querySelectorAll('.si').forEach((x,i)=>x.classList.toggle('lit',i<v));
+  });
+  s.addEventListener('mouseleave',()=>{
+    document.querySelectorAll('.si').forEach((x,i)=>x.classList.toggle('lit',i<_star));
+  });
+});
+
+/* ── Bar animation on load ── */
+setTimeout(()=>{
+  document.getElementById('bar5').style.width='78%';
+  document.getElementById('bar4').style.width='15%';
+  document.getElementById('bar3').style.width='7%';
+  document.getElementById('bar2').style.width='0%';
+  document.getElementById('bar1').style.width='0%';
+},400);
+
+/* ── Filter & Search ── */
+let activeFilter='all';
+function setFilter(f,btn){
+  activeFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filterReviews();
+}
+function filterReviews(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  document.querySelectorAll('.review-card').forEach(card=>{
+    const stars=parseInt(card.dataset.stars);
+    const text=card.textContent.toLowerCase();
+    const mF=activeFilter==='all'||activeFilter==='newest'||String(stars)===activeFilter;
+    const mS=!q||text.includes(q);
+    card.style.display=mF&&mS?'block':'none';
+  });
+}
+
+/* ── Toast ── */
+window.showToast=function(msg,type='info'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=`toast ${type}`;
+  t.classList.remove('hidden');void t.offsetWidth;t.classList.add('show');
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.classList.add('hidden'),400);},3200);
+};
+
+/* ── Avatar color palette ── */
+const COLORS=['#9c6fff','#ff9100','#00e676','#f5c518','#ff4757','#00bcd4','#e91e63','#4caf50','#ff5722','#2196f3'];
+function avatarColor(name){ let h=0; for(let c of name)h=(h*31+c.charCodeAt(0))%COLORS.length; return COLORS[h]; }
+function initials(name){ const p=name.split(' '); return(p[0][0]+(p[1]?p[1][0]:'')).toUpperCase(); }
+function starsHtml(n){ return'⭐'.repeat(n)+'☆'.repeat(5-n); }
+
+/* ── Build review card ── */
+function buildCard(r, idx){
+  const bg=avatarColor(r.name);
+  const card=document.createElement('div');
+  card.className=`review-card star${r.stars}`;
+  card.dataset.stars=r.stars;
+  card.dataset.id=r.id||('preset_'+idx);
+  card.style.animationDelay=(idx%10*0.05)+'s';
+  card.innerHTML=`
+    <div class="rc-top">
+      <div class="rc-avatar" style="background:${bg}">${initials(r.name)}</div>
+      <div class="rc-info">
+        <div class="rc-name-row">
+          <span class="rc-name">${r.name}</span>
+          <span>✅</span>
+        </div>
+        <div class="rc-date">${r.date}</div>
+      </div>
+    </div>
+    <div class="rc-stars">${starsHtml(r.stars)}</div>
+    <div class="rc-text">${r.text}</div>
+    <div class="rc-bottom">
+      <button class="helpful-btn" onclick="likeReview(this,event)">👍 Helpful ${r.helpful}</button>
+      <span class="rc-score">${r.stars}/5</span>
+    </div>`;
+  return card;
+}
+
+function likeReview(btn, e){
+  e.stopPropagation();
+  if(btn.classList.contains('liked')) return;
+  btn.classList.add('liked');
+  const match=btn.textContent.match(/\d+/);
+  const n=match?parseInt(match[0]):0;
+  btn.innerHTML=`👍 Helpful ${n+1}`;
+}
+
+/* ── Load more ── */
+let shownCount=20;
+window.loadMore=function(){
+  const all=document.querySelectorAll('.review-card');
+  all.forEach((c,i)=>{ if(i<shownCount+10) c.style.display='block'; });
+  shownCount+=10;
+  if(shownCount>=all.length) document.getElementById('loadMoreBtn').classList.add('hidden');
+};
+
+/* ── Render initial hidden cards ── */
+function renderCards(list){
+  const el=document.getElementById('reviewsList');
+  el.innerHTML='';
+  list.forEach((r,i)=>{
+    const card=buildCard(r,i);
+    if(i>=shownCount) card.style.display='none';
+    el.appendChild(card);
+  });
+  if(list.length>shownCount) document.getElementById('loadMoreBtn').classList.remove('hidden');
+}
+</script>
+
+<script type="module" src="js/rating.js"></script>
+</body>
+</html>
