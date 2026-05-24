@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ratings — Call a Friend</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--p:#0369a1;--a:#06b6d4;--d:#0c1a2e;--s:#64748b;--b:#e2e8f0;--o:#f8fafc;--star:#f59e0b;}
+body{font-family:"Plus Jakarta Sans",sans-serif;background:#f0f6ff;min-height:100vh;width:100%;overflow-x:hidden;padding-bottom:90px;}
+
+/* HEADER */
+.header{background:white;padding:16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--b);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(3,105,161,0.06);}
+.back{width:36px;height:36px;border-radius:50%;background:#f0f9ff;border:1.5px solid var(--b);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--d);font-size:1rem;flex-shrink:0;transition:all 0.2s;}
+.back:hover{background:#e0f2fe;}
+.header-title{font-size:1rem;font-weight:700;color:var(--d);}
+
+/* BUSINESS CARD */
+.biz-card{background:white;margin:14px;border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 14px rgba(3,105,161,0.07);border:1px solid var(--b);animation:fadeUp 0.5s both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.biz-info{flex:1;}
+.biz-active{display:flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:700;color:#16a34a;margin-bottom:4px;}
+.biz-dot{width:7px;height:7px;background:#22c55e;border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.4)}}
+.biz-name{font-size:0.95rem;font-weight:800;color:var(--d);}
+.biz-verified{font-size:0.72rem;color:var(--p);font-weight:600;margin-top:2px;}
+.biz-logo{width:50px;height:50px;border-radius:14px;overflow:hidden;border:1.5px solid var(--b);display:flex;align-items:center;justify-content:center;background:#f0f9ff;font-size:1.6rem;}
+.biz-logo img{width:100%;height:100%;object-fit:cover;}
+
+/* SUMMARY CARD */
+.summary{background:white;margin:0 14px 14px;border-radius:18px;padding:20px;box-shadow:0 2px 14px rgba(3,105,161,0.07);border:1px solid var(--b);animation:fadeUp 0.5s 0.1s both;}
+.sum-top{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.sum-title{font-size:1rem;font-weight:800;color:var(--d);}
+.sum-sub{font-size:0.75rem;color:var(--s);margin-bottom:18px;}
+.sum-main{display:flex;align-items:center;gap:20px;margin-bottom:18px;}
+.sum-avg{font-size:3.2rem;font-weight:800;color:var(--p);line-height:1;font-family:"Plus Jakarta Sans",sans-serif;}
+.sum-right{}
+.sum-stars{color:var(--star);font-size:1.2rem;letter-spacing:2px;margin-bottom:4px;}
+.sum-count{font-size:0.75rem;color:var(--s);font-weight:600;}
+
+/* BARS */
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.bar-stars{font-size:0.75rem;font-weight:700;color:var(--s);width:24px;text-align:right;}
+.bar-star-icon{color:var(--star);font-size:0.72rem;}
+.bar-track{flex:1;height:8px;background:#f1f5f9;border-radius:100px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--p),var(--a));transition:width 1s cubic-bezier(0.16,1,0.3,1);}
+.bar-count{font-size:0.72rem;color:var(--s);font-weight:600;width:20px;}
+
+/* GIVE RATING */
+.give-rating{background:white;margin:0 14px 14px;border-radius:18px;padding:20px;box-shadow:0 2px 14px rgba(3,105,161,0.07);border:1px solid var(--b);animation:fadeUp 0.5s 0.2s both;}
+.gr-title{font-size:0.95rem;font-weight:800;color:var(--d);margin-bottom:14px;}
+.stars-input{display:flex;gap:8px;margin-bottom:10px;}
+.star-btn{font-size:2rem;cursor:pointer;transition:all 0.2s cubic-bezier(0.16,1,0.3,1);filter:grayscale(1);opacity:0.4;}
+.star-btn.active{filter:grayscale(0);opacity:1;transform:scale(1.15);}
+.star-btn:hover{transform:scale(1.2);}
+.star-hint{font-size:0.75rem;color:var(--s);margin-bottom:14px;font-weight:500;}
+.rating-labels{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.rl{padding:6px 14px;border-radius:100px;border:1.5px solid var(--b);font-size:0.72rem;font-weight:600;color:var(--s);cursor:pointer;transition:all 0.2s;background:white;}
+.rl.active,.rl:hover{background:var(--p);color:white;border-color:var(--p);}
+textarea{width:100%;padding:12px 14px;border:1.5px solid var(--b);border-radius:14px;font-family:"Plus Jakarta Sans",sans-serif;font-size:0.85rem;color:var(--d);resize:none;outline:none;min-height:90px;background:var(--o);transition:all 0.2s;}
+textarea:focus{border-color:var(--a);background:white;box-shadow:0 0 0 3px rgba(6,182,212,0.1);}
+.char-count{text-align:right;font-size:0.68rem;color:var(--s);margin-top:4px;font-weight:500;}
+.submit-review{width:100%;padding:15px;background:linear-gradient(135deg,var(--p),var(--a));color:white;border:none;border-radius:14px;font-family:"Plus Jakarta Sans",sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:14px;box-shadow:0 6px 20px rgba(3,105,161,0.3);transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.submit-review:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(3,105,161,0.4);}
+.submit-review:active{transform:scale(0.98);}
+.submit-review:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+
+/* REVIEWS LIST */
+.reviews-section{margin:0 14px 14px;}
+.rs-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.rs-title{font-size:0.9rem;font-weight:800;color:var(--d);}
+.rs-count{font-size:0.75rem;color:var(--s);}
+
+.review-card{background:white;border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 10px rgba(3,105,161,0.06);border:1px solid var(--b);animation:fadeUp 0.5s both;transition:transform 0.2s;}
+.review-card:hover{transform:translateY(-2px);}
+.rc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.rc-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;color:white;flex-shrink:0;}
+.rc-info{flex:1;}
+.rc-name{font-size:0.85rem;font-weight:700;color:var(--d);}
+.rc-meta{font-size:0.68rem;color:var(--s);margin-top:2px;}
+.rc-stars{color:var(--star);font-size:0.85rem;letter-spacing:1px;}
+.rc-text{font-size:0.82rem;color:var(--s);line-height:1.6;}
+.rc-tag{display:inline-block;background:#f0f9ff;color:var(--p);font-size:0.65rem;font-weight:700;padding:3px 10px;border-radius:100px;margin-bottom:8px;border:1px solid rgba(3,105,161,0.1);}
+.verified{font-size:0.65rem;color:#16a34a;font-weight:700;margin-left:6px;}
+
+/* SUCCESS */
+.success-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.success-overlay.show{display:flex;}
+.sc{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#16a34a,#4ade80);display:flex;align-items:center;justify-content:center;font-size:2rem;animation:pop 0.5s cubic-bezier(0.16,1,0.3,1);box-shadow:0 12px 36px rgba(22,163,74,0.3);}
+@keyframes pop{from{transform:scale(0) rotate(-20deg)}to{transform:scale(1) rotate(0)}}
+.st{font-size:1.1rem;font-weight:800;color:var(--d);}
+.ss{font-size:0.82rem;color:var(--s);}
+
+/* NAV */
+#bottomNav{position:fixed;bottom:0;left:0;right:0;height:auto;min-height:64px;background:rgba(255,255,255,0.98);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-around;border-top:1px solid rgba(3,105,161,0.08);box-shadow:0 -8px 32px rgba(3,105,161,0.10);z-index:999;padding:8px 12px 14px;padding-bottom:max(14px,env(safe-area-inset-bottom));}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;color:#94a3b8;padding:4px 0;position:relative;}
+.nav-item.active{color:var(--p);}
+.nav-item.active::before{content:"";position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:24px;height:3px;background:linear-gradient(90deg,var(--p),var(--a));border-radius:0 0 4px 4px;}
+.nav-label{font-size:0.62rem;font-weight:600;font-family:"Plus Jakarta Sans",sans-serif;}
+.nav-mycall{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--a));display:flex;align-items:center;justify-content:center;margin-top:-18px;box-shadow:0 6px 20px rgba(3,105,161,0.4);border:2.5px solid white;}
+
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--d);color:white;padding:10px 22px;border-radius:100px;font-size:0.82rem;font-weight:600;z-index:999;display:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.25);}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <a href="account.html" class="back">←</a>
+  <div class="header-title">⭐ User Ratings</div>
+</div>
+
+<!-- BUSINESS CARD -->
+<div class="biz-card">
+  <div class="biz-info">
+    <div class="biz-active"><div class="biz-dot"></div>Active</div>
+    <div class="biz-name">Call a Friend</div>
+    <div class="biz-verified">✓ Verified Business</div>
+  </div>
+  <div class="biz-logo">
+    <img src="images/logo.png" alt="Logo" onerror="this.parentElement.innerHTML='🤙'">
+  </div>
+</div>
+
+<!-- RATING SUMMARY -->
+<div class="summary">
+  <div class="sum-top">
+    <span style="font-size:1.3rem;">⭐</span>
+    <div class="sum-title">User Ratings</div>
+  </div>
+  <div class="sum-sub">Trusted by 1000+ users worldwide</div>
+  <div class="sum-main">
+    <div class="sum-avg" id="avgRating">4.8</div>
+    <div class="sum-right">
+      <div class="sum-stars" id="avgStars">★★★★★</div>
+      <div class="sum-count" id="totalCount">55 reviews</div>
+    </div>
+  </div>
+  <div id="barsContainer"></div>
+</div>
+
+<!-- GIVE RATING -->
+<div class="give-rating">
+  <div class="gr-title">✍️ Give Your Rating</div>
+  <div class="stars-input" id="starsInput">
+    <span class="star-btn" onclick="setStar(1)">⭐</span>
+    <span class="star-btn" onclick="setStar(2)">⭐</span>
+    <span class="star-btn" onclick="setStar(3)">⭐</span>
+    <span class="star-btn" onclick="setStar(4)">⭐</span>
+    <span class="star-btn" onclick="setStar(5)">⭐</span>
+  </div>
+  <div class="star-hint" id="starHint">Tap a star to rate</div>
+  <div class="rating-labels" id="ratingLabels" style="display:none;">
+    <span class="rl" onclick="toggleLabel(this)">😊 Helpful</span>
+    <span class="rl" onclick="toggleLabel(this)">💬 Good Listener</span>
+    <span class="rl" onclick="toggleLabel(this)">🤝 Friendly</span>
+    <span class="rl" onclick="toggleLabel(this)">⚡ Quick Response</span>
+    <span class="rl" onclick="toggleLabel(this)">❤️ Caring</span>
+  </div>
+  <textarea id="reviewText" placeholder="Write your feedback..." maxlength="300" oninput="updateChar()"></textarea>
+  <div class="char-count"><span id="charNum">0</span>/300</div>
+  <button class="submit-review" id="submitBtn" onclick="submitReview()">
+    Submit Review
+  </button>
+</div>
+
+<!-- REVIEWS LIST -->
+<div class="reviews-section">
+  <div class="rs-header">
+    <div class="rs-title">All Reviews</div>
+    <div class="rs-count" id="reviewCount">55 reviews</div>
+  </div>
+  <div id="reviewsList"></div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="sov">
+  <div class="sc">✓</div>
+  <div class="st">Review Submit Ho Gaya! 🎉</div>
+  <div class="ss">Shukriya aapke feedback ke liye</div>
+</div>
+
+<!-- NAV -->
+<div id="bottomNav">
+  <a href="index.html" class="nav-item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span class="nav-label">Home</span>
+  </a>
+  <a href="mycall.html" class="nav-item">
+    <div class="nav-mycall">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.36 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.64a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    </div>
+    <span class="nav-label" style="color:#0369a1;font-weight:700;">My Call</span>
+  </a>
+  <a href="account.html" class="nav-item">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span class="nav-label">Account</span>
+  </a>
+</div>
+
+<div id="toast"></div>
+
+<script src="js/rating.js"></script>
+</body>
+</html>
