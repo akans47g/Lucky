@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VIP Subscription | SignalPro AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#14142a; --card:#1e1e38; --card2:#26264a; --card3:#2e2e58;
+      --border:rgba(255,255,255,0.08);
+      --gold:#f5c518; --gold2:#ffd740;
+      --green:#00e676; --red:#ff4757;
+      --purple:#ce93d8; --purple-d:#9c6fff;
+      --orange:#ff9100; --white:#f4f4ff;
+      --gray:#9090b8; --gray2:#4a4a78;
+      --nav-h:66px;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      background:var(--bg); color:var(--white);
+      font-family:'Rajdhani','Noto Sans Devanagari',sans-serif;
+      min-height:100vh; padding-bottom:calc(var(--nav-h)+10px);
+      overflow-x:hidden;
+    }
+    body::after{
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:radial-gradient(circle,rgba(156,111,255,0.06) 1px,transparent 1px);
+      background-size:28px 28px;
+    }
+
+    /* ── TOAST ── */
+    #toast{
+      position:fixed; top:18px; left:50%;
+      transform:translateX(-50%) translateY(-8px);
+      z-index:1000; padding:11px 22px; border-radius:12px;
+      font-size:13px; font-weight:700; opacity:0; pointer-events:none;
+      transition:opacity .3s,transform .3s; white-space:nowrap;
+      max-width:90vw; text-align:center;
+    }
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    #toast.hidden{display:none}
+    #toast.success{background:rgba(0,230,118,.15);border:1px solid var(--green);color:var(--green)}
+    #toast.warn{background:rgba(255,145,0,.15);border:1px solid var(--orange);color:var(--orange)}
+    #toast.error{background:rgba(255,71,87,.15);border:1px solid var(--red);color:var(--red)}
+    #toast.info{background:rgba(156,111,255,.15);border:1px solid var(--purple-d);color:var(--purple)}
+
+    /* ── HEADER ── */
+    header{
+      position:sticky; top:0; z-index:200; height:60px;
+      background:rgba(20,20,42,.96); backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(245,197,24,.3);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 16px; box-shadow:0 4px 24px rgba(0,0,0,.4);
+    }
+    .hd-left{display:flex;align-items:center;gap:8px}
+    .live-pill{display:flex;align-items:center;gap:5px;background:rgba(0,230,118,.12);border:1px solid rgba(0,230,118,.38);border-radius:20px;padding:3px 10px}
+    .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:lp 1.3s ease-in-out infinite}
+    @keyframes lp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.5}}
+    .live-text{font-size:10px;color:var(--green);font-weight:700;letter-spacing:1.5px}
+    .hd-title{
+      font-family:'Orbitron',sans-serif;
+      font-size:clamp(11px,2.8vw,15px); font-weight:900; letter-spacing:1px;
+      background:linear-gradient(90deg,var(--gold),var(--gold2),var(--orange),var(--gold));
+      background-size:300%;
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      animation:shimmer 3s linear infinite;
+    }
+    @keyframes shimmer{0%{background-position:0%}100%{background-position:300%}}
+    .hd-logo{
+      width:40px; height:40px; border-radius:50%;
+      border:2px solid var(--gold); box-shadow:0 0 12px rgba(245,197,24,.4);
+      overflow:hidden; background:var(--card2);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .hd-logo img{width:100%;height:100%;object-fit:cover;display:block}
+    .hd-logo .lf{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:900;color:var(--gold);display:none}
+
+    /* ── MAIN ── */
+    main{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:18px 14px 20px}
+
+    /* ── COIN BALANCE BAR ── */
+    .coin-bar{
+      background:var(--card); border-radius:16px;
+      border:1px solid rgba(245,197,24,.3);
+      padding:14px 16px; margin-bottom:16px;
+      display:flex; align-items:center; justify-content:space-between;
+      animation:rv .5s cubic-bezier(.22,.68,0,1.2) both;
+      position:relative; overflow:hidden;
+    }
+    .coin-bar::after{
+      content:''; position:absolute; top:0; left:-100%; width:55%; height:100%;
+      background:linear-gradient(90deg,transparent,rgba(245,197,24,.05),transparent);
+      animation:sweep 4s ease-in-out infinite;
+    }
+    @keyframes sweep{0%{left:-100%}60%,100%{left:150%}}
+    .cb-left{display:flex;align-items:center;gap:12px}
+    .cb-icon{font-size:28px;animation:cflip 5s ease-in-out infinite}
+    @keyframes cflip{0%,80%,100%{transform:rotateY(0)}85%{transform:rotateY(90deg)}90%{transform:rotateY(0)}}
+    .cb-label{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+    .cb-amount{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:var(--white)}
+    .cb-amount sup{font-size:13px;color:var(--gold);vertical-align:super}
+    .add-coin-btn{
+      background:linear-gradient(135deg,var(--gold),var(--orange));
+      color:#000; border:none; border-radius:10px;
+      padding:8px 16px; font-size:12px; font-weight:800;
+      cursor:pointer; font-family:'Rajdhani',sans-serif; letter-spacing:.5px;
+      transition:transform .15s;
+    }
+    .add-coin-btn:active{transform:scale(.97)}
+
+    /* ── ACTIVE PLAN CARD ── */
+    .active-plan-card{
+      background:linear-gradient(135deg,#0f1a0f,#0d2010,#0a1a08);
+      border:2px solid rgba(0,230,118,.45);
+      border-radius:20px; padding:18px 16px; margin-bottom:16px;
+      position:relative; overflow:hidden;
+      box-shadow:0 8px 32px rgba(0,230,118,.12);
+      animation:rv .5s .06s cubic-bezier(.22,.68,0,1.2) both;
+      display:none;
+    }
+    .active-plan-card::before{
+      content:''; position:absolute; inset:0; pointer-events:none;
+      background:radial-gradient(ellipse at 50% 0%,rgba(0,230,118,.1) 0%,transparent 65%);
+    }
+    .apc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;position:relative}
+    .apc-badge{
+      display:flex; align-items:center; gap:6px;
+      background:rgba(0,230,118,.15); border:1px solid rgba(0,230,118,.4);
+      border-radius:20px; padding:4px 12px;
+      font-size:11px; color:var(--green); font-weight:800; letter-spacing:1px;
+    }
+    .apc-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:lp 1.3s ease-in-out infinite}
+    .apc-name{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--green);position:relative}
+    /* Countdown */
+    .countdown-row{display:flex;gap:8px;justify-content:center;margin-top:4px}
+    .cd-box{
+      background:rgba(0,0,0,.35); border:1px solid rgba(0,230,118,.25);
+      border-radius:10px; padding:10px 8px; min-width:58px; text-align:center;
+    }
+    .cd-num{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--green);line-height:1}
+    .cd-lbl{font-size:10px;color:var(--gray);margin-top:4px;letter-spacing:.5px;text-transform:uppercase}
+    .apc-expires{font-size:11px;color:var(--gray);text-align:center;margin-top:10px;position:relative}
+
+    /* ── HERO ── */
+    .subs-hero{
+      text-align:center; margin-bottom:18px;
+      animation:rv .5s .08s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    .subs-hero .emoji-row{font-size:26px;letter-spacing:6px;margin-bottom:8px;animation:bounce 2s ease-in-out infinite}
+    @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    .subs-hero h1{
+      font-family:'Orbitron',sans-serif;
+      font-size:clamp(18px,5vw,24px); font-weight:900;
+      background:linear-gradient(90deg,var(--gold),var(--gold2),var(--orange),var(--gold));
+      background-size:300%; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      animation:shimmer 3s linear infinite;
+    }
+    .subs-hero p{font-size:13px;color:var(--gray);margin-top:6px;line-height:1.6}
+    .subs-hero .trust-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:10px}
+    .t-pill{
+      background:var(--card2); border:1px solid var(--border);
+      border-radius:20px; padding:4px 12px;
+      font-size:11px; font-weight:700; color:var(--purple);
+    }
+
+    /* ── PLAN CARDS ── */
+    .plans-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+
+    .plan-card{
+      background:var(--card); border-radius:20px;
+      border:1.5px solid var(--border);
+      padding:18px 16px; position:relative; overflow:hidden;
+      transition:transform .15s, border-color .2s, box-shadow .2s;
+      animation:rv .5s cubic-bezier(.22,.68,0,1.2) both;
+      cursor:pointer;
+    }
+    .plan-card:hover{transform:translateY(-3px);border-color:rgba(245,197,24,.35);box-shadow:0 8px 28px rgba(0,0,0,.3)}
+    .plan-card:active{transform:scale(.99)}
+
+    /* popular glow */
+    .plan-card.popular{
+      border-color:rgba(245,197,24,.5);
+      box-shadow:0 0 0 1px rgba(245,197,24,.15), 0 8px 32px rgba(245,197,24,.1);
+    }
+    .plan-card.popular::before{
+      content:''; position:absolute; top:-40%; left:-20%; width:140%; height:180%;
+      background:radial-gradient(ellipse at 50% 0%,rgba(245,197,24,.07) 0%,transparent 65%);
+      pointer-events:none;
+    }
+
+    /* shimmer sweep */
+    .plan-card::after{
+      content:''; position:absolute; top:0; left:-100%; width:55%; height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);
+      animation:sweep 5s ease-in-out infinite;
+    }
+
+    /* left accent */
+    .plan-card .accent{position:absolute;left:0;top:16px;bottom:16px;width:3px;border-radius:0 3px 3px 0}
+    .plan-card:nth-child(1) .accent{background:linear-gradient(180deg,var(--cyan,#00bcd4),#0097a7)}
+    .plan-card:nth-child(2) .accent{background:linear-gradient(180deg,var(--green),#00c853)}
+    .plan-card:nth-child(3) .accent{background:linear-gradient(180deg,var(--gold),var(--orange))}
+    .plan-card:nth-child(4) .accent{background:linear-gradient(180deg,var(--purple-d),#c084fc)}
+
+    .plan-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+    .plan-top-left{}
+    .plan-badge{
+      display:inline-flex;align-items:center;gap:5px;
+      border-radius:20px;padding:3px 10px;
+      font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+      margin-bottom:6px;
+    }
+    .badge-cyan  {background:rgba(0,188,212,.12);border:1px solid rgba(0,188,212,.3);color:#00bcd4}
+    .badge-green {background:rgba(0,230,118,.12);border:1px solid rgba(0,230,118,.3);color:var(--green)}
+    .badge-gold  {background:rgba(245,197,24,.12);border:1px solid rgba(245,197,24,.3);color:var(--gold)}
+    .badge-purple{background:rgba(156,111,255,.12);border:1px solid rgba(156,111,255,.3);color:var(--purple-d)}
+
+    .popular-badge{
+      position:absolute; top:14px; right:14px;
+      background:linear-gradient(135deg,var(--gold),var(--orange));
+      color:#000; font-size:10px; font-weight:900; letter-spacing:1px;
+      padding:4px 12px; border-radius:20px;
+      box-shadow:0 4px 12px rgba(245,197,24,.35);
+      animation:pop-glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes pop-glow{from{box-shadow:0 4px 12px rgba(245,197,24,.3)}to{box-shadow:0 4px 20px rgba(245,197,24,.65)}}
+
+    .plan-name{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--white)}
+    .plan-sub{font-size:12px;color:var(--gray);margin-top:2px}
+
+    .price-block{text-align:right}
+    .price-old{font-size:13px;color:var(--gray);text-decoration:line-through;font-family:'Orbitron',sans-serif}
+    .price-new{
+      font-family:'Orbitron',sans-serif; font-size:26px; font-weight:900;
+      line-height:1.1; margin-top:2px;
+    }
+    .plan-card:nth-child(1) .price-new{color:#00bcd4}
+    .plan-card:nth-child(2) .price-new{color:var(--green)}
+    .plan-card:nth-child(3) .price-new{color:var(--gold)}
+    .plan-card:nth-child(4) .price-new{color:var(--purple-d)}
+    .price-new sup{font-size:14px;vertical-align:super}
+    .price-saved{
+      font-size:10px; font-weight:700; margin-top:4px; padding:2px 8px;
+      border-radius:20px; display:inline-block;
+    }
+    .plan-card:nth-child(1) .price-saved{background:rgba(0,188,212,.12);color:#00bcd4}
+    .plan-card:nth-child(2) .price-saved{background:rgba(0,230,118,.12);color:var(--green)}
+    .plan-card:nth-child(3) .price-saved{background:rgba(245,197,24,.12);color:var(--gold)}
+    .plan-card:nth-child(4) .price-saved{background:rgba(156,111,255,.12);color:var(--purple-d)}
+
+    .plan-divider{height:1px;background:var(--border);margin:12px 0}
+
+    .plan-features{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+    .feat{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(240,240,248,.85)}
+    .feat-icon{width:22px;text-align:center;flex-shrink:0;font-size:14px}
+
+    .plan-coin-cost{
+      display:flex; align-items:center; justify-content:space-between;
+      background:var(--card2); border-radius:10px; padding:9px 12px;
+      border:1px solid var(--border); margin-bottom:14px;
+    }
+    .pcc-label{font-size:12px;color:var(--gray);font-weight:700}
+    .pcc-val{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:var(--gold)}
+
+    .buy-btn{
+      width:100%; padding:14px; border:none; border-radius:14px;
+      font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900;
+      letter-spacing:.5px; cursor:pointer; position:relative; overflow:hidden;
+      transition:transform .15s;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .plan-card:nth-child(1) .buy-btn{background:linear-gradient(135deg,#00bcd4,#0097a7);color:#fff}
+    .plan-card:nth-child(2) .buy-btn{background:linear-gradient(135deg,var(--green),#00c853);color:#000}
+    .plan-card:nth-child(3) .buy-btn{background:linear-gradient(135deg,var(--gold),var(--orange));color:#000}
+    .plan-card:nth-child(4) .buy-btn{background:linear-gradient(135deg,var(--purple-d),#c084fc);color:#000}
+    .buy-btn::after{
+      content:''; position:absolute; top:0; left:-100%; width:55%; height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
+      animation:sweep 2.5s ease-in-out infinite;
+    }
+    .buy-btn:active{transform:scale(.98)}
+    .buy-btn:disabled{opacity:.5;cursor:not-allowed;animation:none}
+    .spinner{width:16px;height:16px;border:2px solid rgba(0,0,0,.25);border-top-color:currentColor;border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .hidden{display:none!important}
+
+    /* animation delays */
+    .plan-card:nth-child(1){animation-delay:.10s}
+    .plan-card:nth-child(2){animation-delay:.17s}
+    .plan-card:nth-child(3){animation-delay:.24s}
+    .plan-card:nth-child(4){animation-delay:.31s}
+
+    /* ── TRUST FOOTER ── */
+    .trust-footer{
+      background:var(--card); border-radius:16px; border:1px solid var(--border);
+      padding:16px; margin-bottom:4px;
+      animation:rv .5s .38s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    .tf-title{font-size:13px;font-weight:800;color:var(--white);margin-bottom:12px;text-align:center}
+    .tf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .tf-item{
+      display:flex; align-items:center; gap:7px;
+      background:var(--card2); border-radius:10px; padding:10px 10px;
+      border:1px solid var(--border); font-size:12px; color:var(--gray); font-weight:700;
+    }
+
+    /* ── NO COIN POPUP ── */
+    .modal-overlay{
+      position:fixed; inset:0; z-index:500;
+      background:rgba(0,0,0,.7); backdrop-filter:blur(10px);
+      display:flex; align-items:flex-end; justify-content:center;
+      opacity:0; pointer-events:none; transition:opacity .25s;
+    }
+    .modal-overlay.open{opacity:1;pointer-events:all}
+    .modal-box{
+      background:var(--card2); border-radius:26px 26px 0 0;
+      border:1px solid rgba(255,145,0,.25); border-bottom:none;
+      padding:24px 20px 36px; width:100%; max-width:480px;
+      transform:translateY(100%); transition:transform .32s cubic-bezier(.22,.68,0,1.2);
+    }
+    .modal-overlay.open .modal-box{transform:translateY(0)}
+    .modal-handle{width:40px;height:4px;border-radius:2px;background:var(--gray2);margin:0 auto 20px}
+    .modal-icon{font-size:44px;text-align:center;margin-bottom:8px;animation:bounce 1.5s ease-in-out infinite}
+    .modal-title{font-family:'Orbitron',sans-serif;font-size:17px;font-weight:900;color:var(--white);text-align:center;margin-bottom:6px}
+    .modal-sub{font-size:13px;color:var(--gray);text-align:center;margin-bottom:6px;line-height:1.6}
+    .modal-coins-needed{
+      display:flex; align-items:center; justify-content:space-between;
+      background:var(--card3); border-radius:12px; padding:12px 16px;
+      margin:14px 0; border:1px solid rgba(255,145,0,.2);
+    }
+    .mcn-label{font-size:12px;color:var(--gray);font-weight:700}
+    .mcn-val{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900}
+    .mcn-val.red{color:var(--red)} .mcn-val.green{color:var(--green)}
+    .modal-add-btn{
+      width:100%; padding:15px; border:none; border-radius:15px;
+      background:linear-gradient(135deg,var(--gold),var(--orange));
+      color:#000; font-family:'Orbitron',sans-serif;
+      font-size:14px; font-weight:900; cursor:pointer;
+      animation:cta-glow 2s ease-in-out infinite;
+      transition:transform .15s; margin-top:4px;
+    }
+    @keyframes cta-glow{0%,100%{box-shadow:0 6px 24px rgba(245,197,24,.3)}50%{box-shadow:0 8px 36px rgba(245,197,24,.6),0 0 0 6px rgba(245,197,24,.07)}}
+    .modal-add-btn:active{transform:scale(.98)}
+    .modal-cancel-btn{
+      width:100%; padding:13px; border:1.5px solid var(--border);
+      border-radius:14px; background:transparent; color:var(--gray);
+      font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700;
+      cursor:pointer; margin-top:8px; transition:border-color .2s;
+    }
+    .modal-cancel-btn:hover{border-color:rgba(255,255,255,.15)}
+
+    /* ── CONFIRM POPUP ── */
+    .confirm-overlay{
+      position:fixed; inset:0; z-index:600;
+      background:rgba(0,0,0,.75); backdrop-filter:blur(12px);
+      display:flex; align-items:center; justify-content:center; padding:20px;
+      opacity:0; pointer-events:none; transition:opacity .25s;
+    }
+    .confirm-overlay.open{opacity:1;pointer-events:all}
+    .confirm-box{
+      background:var(--card2); border-radius:24px;
+      border:1px solid rgba(245,197,24,.3);
+      padding:28px 22px; width:100%; max-width:360px;
+      transform:scale(.9); transition:transform .3s cubic-bezier(.22,.68,0,1.2);
+      text-align:center;
+    }
+    .confirm-overlay.open .confirm-box{transform:scale(1)}
+    .confirm-icon{font-size:48px;margin-bottom:10px;display:block}
+    .confirm-title{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:var(--white);margin-bottom:6px}
+    .confirm-sub{font-size:13px;color:var(--gray);line-height:1.6;margin-bottom:16px}
+    .confirm-plan-name{font-family:'Orbitron',sans-serif;font-size:18px;color:var(--gold);font-weight:900}
+    .confirm-coins-row{
+      display:flex; align-items:center; justify-content:space-between;
+      background:var(--card3); border-radius:12px; padding:12px 16px;
+      margin:14px 0; border:1px solid rgba(245,197,24,.2);
+    }
+    .ccr-l{font-size:12px;color:var(--gray);font-weight:700}
+    .ccr-v{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;color:var(--gold)}
+    .confirm-btns{display:flex;gap:10px;margin-top:4px}
+    .confirm-cancel{
+      flex:1; padding:13px; border-radius:14px;
+      border:1.5px solid var(--border); background:var(--card3);
+      color:var(--white); font-size:14px; font-weight:700;
+      cursor:pointer; font-family:'Rajdhani',sans-serif;
+    }
+    .confirm-ok{
+      flex:1; padding:13px; border-radius:14px; border:none;
+      background:linear-gradient(135deg,var(--gold),var(--orange));
+      color:#000; font-size:14px; font-weight:900;
+      cursor:pointer; font-family:'Rajdhani',sans-serif;
+      box-shadow:0 4px 16px rgba(245,197,24,.35);
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      transition:transform .15s;
+    }
+    .confirm-ok:active{transform:scale(.97)}
+    .confirm-ok:disabled{opacity:.5;cursor:not-allowed}
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav{
+      position:fixed; bottom:0; left:0; right:0; height:var(--nav-h); z-index:200;
+      background:rgba(20,20,42,.97); backdrop-filter:blur(20px);
+      border-top:1px solid rgba(245,197,24,.25); display:flex; align-items:stretch;
+    }
+    .nav-btn{
+      flex:1; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:4px;
+      background:none; border:none; cursor:pointer; color:var(--gray);
+      font-size:9px; font-weight:700; letter-spacing:.8px; text-transform:uppercase;
+      position:relative;
+    }
+    .nav-btn .ni{font-size:22px;line-height:1;transition:transform .2s}
+    .nav-btn.active{color:var(--purple-d)}
+    .nav-btn.active .ni{transform:translateY(-2px)}
+    .nav-btn.active::after{
+      content:''; position:absolute; top:0; left:15%; right:15%; height:2px;
+      border-radius:0 0 4px 4px;
+      background:linear-gradient(90deg,transparent,var(--purple-d),transparent);
+    }
+
+    @keyframes rv{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+
+<div id="toast" class="toast hidden"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="hd-left">
+    <div class="live-pill"><div class="live-dot"></div><span class="live-text">ACTIVE</span></div>
+  </div>
+  <div class="hd-title">VIP Subscription</div>
+  <div class="hd-logo">
+    <img src="https://raw.githubusercontent.com/akans47g/Lucky/main/logo.jpg" alt="Logo"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='block';"/>
+    <span class="lf">SP</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- COIN BALANCE -->
+  <div class="coin-bar">
+    <div class="cb-left">
+      <div class="cb-icon">🪙</div>
+      <div>
+        <div class="cb-label">Available Coins</div>
+        <div class="cb-amount"><sup>₹</sup><span id="coinDisplay">0</span></div>
+      </div>
+    </div>
+    <button class="add-coin-btn" onclick="location.href='add-money.html'">+ Add Coins</button>
+  </div>
+
+  <!-- ACTIVE PLAN (shown if user has active subscription) -->
+  <div class="active-plan-card" id="activePlanCard">
+    <div class="apc-top">
+      <div>
+        <div class="apc-badge"><div class="apc-dot"></div> ACTIVE VIP</div>
+        <div class="apc-name" id="activePlanName">—</div>
+      </div>
+    </div>
+    <div class="countdown-row">
+      <div class="cd-box"><div class="cd-num" id="cdDays">00</div><div class="cd-lbl">Days</div></div>
+      <div class="cd-box"><div class="cd-num" id="cdHrs">00</div><div class="cd-lbl">Hrs</div></div>
+      <div class="cd-box"><div class="cd-num" id="cdMin">00</div><div class="cd-lbl">Min</div></div>
+      <div class="cd-box"><div class="cd-num" id="cdSec">00</div><div class="cd-lbl">Sec</div></div>
+    </div>
+    <div class="apc-expires" id="apcExpires"></div>
+  </div>
+
+  <!-- HERO -->
+  <div class="subs-hero">
+    <div class="emoji-row">💎🔥⭐🚀💰</div>
+    <h1>Get VIP Access</h1>
+    <p>Coins se subscription activate karo<br>aur roz AI signals se profit kamao</p>
+    <div class="trust-pills">
+      <span class="t-pill">🤖 AI Powered</span>
+      <span class="t-pill">📈 BIG / SMALL</span>
+      <span class="t-pill">⚡ Instant Access</span>
+      <span class="t-pill">🔒 Secure</span>
+    </div>
+  </div>
+
+  <!-- PLANS -->
+  <div class="plans-grid">
+
+    <!-- Plan 1: 7 Days -->
+    <div class="plan-card" data-plan="7days" data-coins="259" data-days="7">
+      <div class="accent"></div>
+      <div class="plan-top">
+        <div class="plan-top-left">
+          <div class="plan-badge badge-cyan">⚡ Trial Plan</div>
+          <div class="plan-name">7 Days</div>
+          <div class="plan-sub">Perfect for beginners</div>
+        </div>
+        <div class="price-block">
+          <div class="price-old">₹499</div>
+          <div class="price-new"><sup>₹</sup>259</div>
+          <div class="price-saved">Save ₹240</div>
+        </div>
+      </div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="feat"><span class="feat-icon">✅</span>Full AI Signal Access (7 Days)</div>
+        <div class="feat"><span class="feat-icon">✅</span>BIG / SMALL Predictions</div>
+        <div class="feat"><span class="feat-icon">✅</span>Real-time Accuracy Display</div>
+        <div class="feat"><span class="feat-icon">✅</span>24/7 Signal Updates</div>
+      </div>
+      <div class="plan-coin-cost">
+        <span class="pcc-label">🪙 Coins Required</span>
+        <span class="pcc-val">259 Coins</span>
+      </div>
+      <button class="buy-btn" onclick="initBuy(this)">
+        <span>Activate Now ⚡</span>
+        <span class="spinner hidden"></span>
+      </button>
+    </div>
+
+    <!-- Plan 2: 14 Days -->
+    <div class="plan-card" data-plan="14days" data-coins="499" data-days="14">
+      <div class="accent"></div>
+      <div class="plan-top">
+        <div class="plan-top-left">
+          <div class="plan-badge badge-green">🟢 Standard</div>
+          <div class="plan-name">14 Days</div>
+          <div class="plan-sub">Best for regular traders</div>
+        </div>
+        <div class="price-block">
+          <div class="price-old">₹999</div>
+          <div class="price-new"><sup>₹</sup>499</div>
+          <div class="price-saved">Save ₹500</div>
+        </div>
+      </div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="feat"><span class="feat-icon">✅</span>Full AI Signal Access (14 Days)</div>
+        <div class="feat"><span class="feat-icon">✅</span>BIG / SMALL Predictions</div>
+        <div class="feat"><span class="feat-icon">✅</span>Priority Signal Updates</div>
+        <div class="feat"><span class="feat-icon">✅</span>24/7 Live Accuracy</div>
+        <div class="feat"><span class="feat-icon">✅</span>Community Access</div>
+      </div>
+      <div class="plan-coin-cost">
+        <span class="pcc-label">🪙 Coins Required</span>
+        <span class="pcc-val">499 Coins</span>
+      </div>
+      <button class="buy-btn" onclick="initBuy(this)">
+        <span>Activate Now 🚀</span>
+        <span class="spinner hidden"></span>
+      </button>
+    </div>
+
+    <!-- Plan 3: 28 Days (POPULAR) -->
+    <div class="plan-card popular" data-plan="28days" data-coins="949" data-days="28">
+      <div class="accent"></div>
+      <div class="popular-badge">🔥 MOST POPULAR</div>
+      <div class="plan-top">
+        <div class="plan-top-left">
+          <div class="plan-badge badge-gold">⭐ Premium</div>
+          <div class="plan-name">28 Days</div>
+          <div class="plan-sub">Best value for money</div>
+        </div>
+        <div class="price-block">
+          <div class="price-old">₹1999</div>
+          <div class="price-new"><sup>₹</sup>949</div>
+          <div class="price-saved">Save ₹1050</div>
+        </div>
+      </div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="feat"><span class="feat-icon">✅</span>Full AI Signal Access (28 Days)</div>
+        <div class="feat"><span class="feat-icon">✅</span>BIG / SMALL Predictions</div>
+        <div class="feat"><span class="feat-icon">✅</span>VIP Priority Signals</div>
+        <div class="feat"><span class="feat-icon">✅</span>24/7 Live Accuracy</div>
+        <div class="feat"><span class="feat-icon">✅</span>Community + Support</div>
+        <div class="feat"><span class="feat-icon">✅</span>Advanced AI Insights</div>
+      </div>
+      <div class="plan-coin-cost">
+        <span class="pcc-label">🪙 Coins Required</span>
+        <span class="pcc-val">949 Coins</span>
+      </div>
+      <button class="buy-btn" onclick="initBuy(this)">
+        <span>Activate Now 💎</span>
+        <span class="spinner hidden"></span>
+      </button>
+    </div>
+
+    <!-- Plan 4: 56 Days -->
+    <div class="plan-card" data-plan="56days" data-coins="1799" data-days="56">
+      <div class="accent"></div>
+      <div class="plan-top">
+        <div class="plan-top-left">
+          <div class="plan-badge badge-purple">👑 Elite</div>
+          <div class="plan-name">56 Days</div>
+          <div class="plan-sub">Maximum profit potential</div>
+        </div>
+        <div class="price-block">
+          <div class="price-old">₹3999</div>
+          <div class="price-new"><sup>₹</sup>1799</div>
+          <div class="price-saved">Save ₹2200</div>
+        </div>
+      </div>
+      <div class="plan-divider"></div>
+      <div class="plan-features">
+        <div class="feat"><span class="feat-icon">✅</span>Full AI Signal Access (56 Days)</div>
+        <div class="feat"><span class="feat-icon">✅</span>BIG / SMALL Predictions</div>
+        <div class="feat"><span class="feat-icon">✅</span>Elite VIP Signals + Alerts</div>
+        <div class="feat"><span class="feat-icon">✅</span>24/7 Live Accuracy</div>
+        <div class="feat"><span class="feat-icon">✅</span>Community + Priority Support</div>
+        <div class="feat"><span class="feat-icon">✅</span>Advanced AI Insights</div>
+        <div class="feat"><span class="feat-icon">✅</span>Best ROI Guaranteed</div>
+      </div>
+      <div class="plan-coin-cost">
+        <span class="pcc-label">🪙 Coins Required</span>
+        <span class="pcc-val">1799 Coins</span>
+      </div>
+      <button class="buy-btn" onclick="initBuy(this)">
+        <span>Activate Now 👑</span>
+        <span class="spinner hidden"></span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- TRUST FOOTER -->
+  <div class="trust-footer">
+    <div class="tf-title">🛡️ 100% Safe & Secure</div>
+    <div class="tf-grid">
+      <div class="tf-item">🔒 <span>Secure Payment</span></div>
+      <div class="tf-item">⚡ <span>Instant Activate</span></div>
+      <div class="tf-item">🤖 <span>AI Powered</span></div>
+      <div class="tf-item">💬 <span>24/7 Support</span></div>
+      <div class="tf-item">🔄 <span>Auto Renewal</span></div>
+      <div class="tf-item">📈 <span>95%+ Accuracy</span></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- NO COIN POPUP -->
+<div class="modal-overlay" id="noCoinModal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-icon">🪙</div>
+    <div class="modal-title">Coins Available Nahi Hain!</div>
+    <div class="modal-sub">
+      Is plan ko activate karne ke liye aapke account mein
+      <strong style="color:var(--gold)" id="modalNeedCoins">0</strong> coins chahiye.
+    </div>
+    <div class="modal-coins-needed">
+      <div>
+        <div class="mcn-label">Aapke paas hain</div>
+        <div class="mcn-val green" id="modalHaveCoins">0 🪙</div>
+      </div>
+      <div style="color:var(--gray2); font-size:20px">→</div>
+      <div>
+        <div class="mcn-label">Chahiye</div>
+        <div class="mcn-val red" id="modalNeedCoins2">0 🪙</div>
+      </div>
+    </div>
+    <button class="modal-add-btn" onclick="goAddMoney()">➕ Add Money Now</button>
+    <button class="modal-cancel-btn" onclick="closeNoCoinModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- CONFIRM POPUP -->
+<div class="confirm-overlay" id="confirmModal">
+  <div class="confirm-box">
+    <span class="confirm-icon">💎</span>
+    <div class="confirm-title">Plan Activate Karo?</div>
+    <div class="confirm-sub">
+      Aap <span class="confirm-plan-name" id="confirmPlanName">—</span> plan activate karne wale ho
+    </div>
+    <div class="confirm-coins-row">
+      <div>
+        <div class="ccr-l">Coins Kate Jaayenge</div>
+        <div class="ccr-v" id="confirmCoins">0 🪙</div>
+      </div>
+      <div>
+        <div class="ccr-l">Baad mein Bachenge</div>
+        <div class="ccr-v" id="confirmRemain">0 🪙</div>
+      </div>
+    </div>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="confirm-ok" id="confirmOkBtn" onclick="executePurchase()">
+        <span id="confirmOkTxt">✅ Confirm</span>
+        <span id="confirmSpinner" class="spinner hidden"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn" onclick="location.href='index.html'"><span class="ni">🏠</span>Home</button>
+  <button class="nav-btn active"><span class="ni">💎</span>VIP Shot</button>
+  <button class="nav-btn" onclick="location.href='proof.html'"><span class="ni">📊</span>Proof</button>
+  <button class="nav-btn" onclick="location.href='account.html'"><span class="ni">👤</span>Account</button>
+</nav>
+
+<script type="module" src="js/subs.js"></script>
+<script>
+/* ── Countdown Timer ── */
+let _countdownInterval = null;
+window.startCountdown = function(expiresAt) {
+  if (_countdownInterval) clearInterval(_countdownInterval);
+  function tick() {
+    const now  = Date.now();
+    const diff = expiresAt - now;
+    if (diff <= 0) {
+      clearInterval(_countdownInterval);
+      document.getElementById('cdDays').textContent = '00';
+      document.getElementById('cdHrs').textContent  = '00';
+      document.getElementById('cdMin').textContent  = '00';
+      document.getElementById('cdSec').textContent  = '00';
+      document.getElementById('activePlanCard').style.display = 'none';
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000)  / 60000);
+    const s = Math.floor((diff % 60000)    / 1000);
+    document.getElementById('cdDays').textContent = String(d).padStart(2,'0');
+    document.getElementById('cdHrs').textContent  = String(h).padStart(2,'0');
+    document.getElementById('cdMin').textContent  = String(m).padStart(2,'0');
+    document.getElementById('cdSec').textContent  = String(s).padStart(2,'0');
+  }
+  tick();
+  _countdownInterval = setInterval(tick, 1000);
+};
+
+/* ── Toast ── */
+window.showToast = function(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type}`;
+  t.classList.remove('hidden'); void t.offsetWidth; t.classList.add('show');
+  setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.classList.add('hidden'),400); }, 3200);
+};
+
+/* ── No Coin Modal ── */
+window.openNoCoinModal = function(have, need) {
+  document.getElementById('modalHaveCoins').textContent  = have + ' 🪙';
+  document.getElementById('modalNeedCoins').textContent  = need;
+  document.getElementById('modalNeedCoins2').textContent = need + ' 🪙';
+  document.getElementById('noCoinModal').classList.add('open');
+};
+window.closeNoCoinModal = function() {
+  document.getElementById('noCoinModal').classList.remove('open');
+};
+window.goAddMoney = function() {
+  window.location.href = 'add-money.html';
+};
+document.getElementById('noCoinModal').addEventListener('click', function(e) {
+  if (e.target === this) window.closeNoCoinModal();
+});
+
+/* ── Confirm Modal ── */
+window._pendingCard = null;  /* window pe rakho — subs.js module bhi access kar sake */
+
+window.initBuy = function(btn) {
+  window._pendingCard = btn.closest('.plan-card');
+  const coins   = parseInt(window._pendingCard.dataset.coins);
+  const planId  = window._pendingCard.dataset.plan;
+
+  /* Fresh Firestore coins use karo */
+  const have = parseInt(window._firestoreCoins || localStorage.getItem('sp_coins') || '0');
+  const planNames = { '7days':'7 Days Trial','14days':'14 Days','28days':'28 Days Premium','56days':'56 Days Elite' };
+
+  if (have < coins) {
+    window.openNoCoinModal(have, coins);
+    return;
+  }
+
+  document.getElementById('confirmPlanName').textContent = planNames[planId] || planId;
+  document.getElementById('confirmCoins').textContent    = coins + ' 🪙';
+  document.getElementById('confirmRemain').textContent   = (have - coins) + ' 🪙';
+  document.getElementById('confirmModal').classList.add('open');
+};
+
+window.closeConfirm = function() {
+  document.getElementById('confirmModal').classList.remove('open');
+  window._pendingCard = null;
+};
+
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+  if (e.target === this) window.closeConfirm();
+});
+
+/* executePurchase — subs.js module se override hoga */
+window.executePurchase = function() {
+  console.warn('subs.js load nahi hua abhi — retry');
+};
+</script>
+</body>
+</html>
