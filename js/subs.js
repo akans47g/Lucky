@@ -117,7 +117,7 @@ window.executePurchase = async function() {
   const card = window._pendingCard;
   if (!card) return;
 
-  const user = auth.currentUser;
+  const user = window._currentUser || auth.currentUser;
   if (!user) {
     window.showToast('⚠️ Pehle login karo', 'warn');
     setTimeout(() => window.location.href = 'login.html', 1200);
@@ -187,23 +187,27 @@ window.executePurchase = async function() {
   }
 };
 
+/* ── GLOBAL state ── */
+window._firestoreCoins = 0;
+window._currentUser    = null;
+
 /* ── AUTH + INIT ── */
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    /* Not logged in — show 0 coins, no active plan */
     showCoins(0);
+    window._firestoreCoins = 0;
+    window._currentUser    = null;
     return;
   }
 
-  /* Save basic info */
+  window._currentUser = user;
   localStorage.setItem('sp_uid',   user.uid);
   localStorage.setItem('sp_name',  user.displayName || 'SignalPro User');
   localStorage.setItem('sp_email', user.email || '');
 
-  /* Load Firestore data */
+  /* Load Firestore data — FRESH read */
   const data = await loadUser(user.uid);
   if (!data) {
-    /* New user — create doc */
     await setDoc(doc(db, 'users', user.uid), {
       uid:       user.uid,
       name:      user.displayName || 'SignalPro User',
@@ -213,11 +217,13 @@ onAuthStateChanged(auth, async (user) => {
       plan:      'free',
       createdAt: serverTimestamp(),
     });
+    window._firestoreCoins = 0;
     showCoins(0);
     return;
   }
 
   const coins = data.coins ?? 0;
+  window._firestoreCoins = coins;   /* Always fresh from Firestore */
   localStorage.setItem('sp_coins', coins);
   localStorage.setItem('sp_plan',  data.plan || 'free');
 
