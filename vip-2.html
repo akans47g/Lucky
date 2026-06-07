@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VIP Signal | SignalPro AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#06060e;
+      --bg2:#0c0c1a;
+      --card:#101020;
+      --card2:#161628;
+      --card3:#1e1e38;
+      --border:rgba(255,255,255,0.06);
+      --gold:#f5c518; --gold2:#ffd740; --gold-dim:rgba(245,197,24,0.12);
+      --green:#00e676; --green2:#00c853; --green-dim:rgba(0,230,118,0.10);
+      --red:#ff4757;
+      --purple:#9c6fff; --purple2:#ce93d8; --purple-dim:rgba(156,111,255,0.10);
+      --orange:#ff9100;
+      --white:#eeeeff; --gray:#6868a0; --gray2:#282848;
+      --nav-h:66px;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      background:var(--bg); color:var(--white);
+      font-family:'Rajdhani',sans-serif;
+      min-height:100vh;
+      padding-bottom:calc(var(--nav-h) + 20px);
+      overflow-x:hidden;
+    }
+
+    /* ── ambient BG ── */
+    body::before{
+      content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+      background:
+        radial-gradient(ellipse 60% 40% at 15% 15%, rgba(156,111,255,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 35% at 85% 80%, rgba(245,197,24,0.04) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(0,230,118,0.03) 0%, transparent 70%);
+    }
+
+    /* ── LOADING ── */
+    #loadingOverlay{
+      position:fixed; inset:0; z-index:900; background:var(--bg);
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;
+    }
+    #loadingOverlay.hidden{display:none}
+    .ld-ring-wrap{position:relative; width:64px; height:64px}
+    .ld-ring{
+      position:absolute; inset:0; border-radius:50%;
+      border:2.5px solid transparent;
+      border-top-color:var(--gold);
+      animation:spin 1s linear infinite;
+    }
+    .ld-ring2{
+      position:absolute; inset:6px; border-radius:50%;
+      border:2px solid transparent;
+      border-top-color:var(--purple);
+      animation:spin .7s linear infinite reverse;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .ld-txt{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--gray);letter-spacing:3px;text-transform:uppercase}
+    .ld-dots{display:flex;gap:8px}
+    .ld-dot{width:7px;height:7px;border-radius:50%;animation:db .9s ease-in-out infinite}
+    .ld-dot:nth-child(1){background:var(--gold);animation-delay:0s}
+    .ld-dot:nth-child(2){background:var(--green);animation-delay:.2s}
+    .ld-dot:nth-child(3){background:var(--purple);animation-delay:.4s}
+    @keyframes db{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-10px);opacity:1}}
+
+    /* ── TOAST ── */
+    #toast{
+      position:fixed; top:16px; left:50%;
+      transform:translateX(-50%) translateY(-10px);
+      z-index:1000; padding:10px 20px; border-radius:12px;
+      font-size:13px; font-weight:700; opacity:0; pointer-events:none;
+      transition:opacity .3s,transform .3s; white-space:nowrap; max-width:92vw; text-align:center;
+    }
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    #toast.hidden{display:none}
+    #toast.success{background:rgba(0,230,118,.12);border:1px solid var(--green);color:var(--green)}
+    #toast.warn   {background:rgba(255,145,0,.12); border:1px solid var(--orange);color:var(--orange)}
+    #toast.error  {background:rgba(255,71,87,.12); border:1px solid var(--red);color:var(--red)}
+    #toast.info   {background:rgba(156,111,255,.12);border:1px solid var(--purple);color:var(--purple2)}
+
+    /* ── HEADER ── */
+    header{
+      position:sticky; top:0; z-index:200; height:56px;
+      background:rgba(6,6,14,0.96); backdrop-filter:blur(24px);
+      border-bottom:1px solid rgba(245,197,24,0.12);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 15px;
+    }
+    .hd-left{display:flex;align-items:center;gap:8px}
+    .live-pill{
+      display:flex; align-items:center; gap:5px;
+      background:var(--green-dim); border:1px solid rgba(0,230,118,0.25);
+      border-radius:20px; padding:3px 10px;
+    }
+    .live-dot{
+      width:6px; height:6px; border-radius:50%;
+      background:var(--green); box-shadow:0 0 6px var(--green),0 0 14px var(--green);
+      animation:live-pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes live-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.8);opacity:.4}}
+    .live-text{font-size:9px;color:var(--green);font-weight:900;letter-spacing:2px}
+    .hd-title{
+      font-family:'Orbitron',sans-serif;
+      font-size:clamp(11px,3vw,14px); font-weight:900; letter-spacing:2px;
+      background:linear-gradient(90deg,var(--gold),#fff8dc,var(--gold2),var(--orange),var(--gold));
+      background-size:300%; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      animation:sh 3s linear infinite;
+    }
+    @keyframes sh{0%{background-position:0%}100%{background-position:300%}}
+    .hd-logo{
+      width:36px; height:36px; border-radius:50%;
+      border:1.5px solid rgba(245,197,24,0.4);
+      box-shadow:0 0 12px rgba(245,197,24,0.18);
+      overflow:hidden; background:var(--card2);
+      display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    }
+    .hd-logo img{width:100%;height:100%;object-fit:cover;display:block}
+    .hd-logo .lf{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:900;color:var(--gold);display:none}
+
+    /* ── MAIN ── */
+    main{position:relative;z-index:1;max-width:460px;margin:0 auto;padding:13px 12px 8px}
+
+    /* ── SUBSCRIPTION CARD ── */
+    .sub-card{
+      border-radius:18px; padding:15px 16px; margin-bottom:12px;
+      position:relative; overflow:hidden;
+      background:linear-gradient(135deg,#071207,#091809,#051005);
+      border:1px solid rgba(0,230,118,0.2);
+      box-shadow:0 6px 28px rgba(0,0,0,0.5), inset 0 1px 0 rgba(0,230,118,0.08);
+      animation:rv .5s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    .sub-card::before{
+      content:''; position:absolute; top:-40%; left:-20%; width:140%; height:180%;
+      background:radial-gradient(ellipse at 50% 0%, rgba(0,230,118,0.1) 0%, transparent 65%);
+      pointer-events:none;
+    }
+    .sc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;position:relative}
+    .sc-badge{
+      display:flex; align-items:center; gap:5px;
+      background:rgba(0,230,118,0.08); border:1px solid rgba(0,230,118,0.25);
+      border-radius:20px; padding:3px 10px;
+      font-size:9px; color:var(--green); font-weight:900; letter-spacing:2px;
+    }
+    .sc-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 7px var(--green);animation:live-pulse 1.2s ease-in-out infinite}
+    .sc-name{
+      font-family:'Orbitron',sans-serif; font-size:13px; font-weight:900; color:var(--green);
+      text-shadow:0 0 18px rgba(0,230,118,0.5); position:relative;
+    }
+    .cd-row{display:flex;gap:6px;position:relative}
+    .cd-box{
+      flex:1; background:rgba(0,0,0,0.35);
+      border:1px solid rgba(0,230,118,0.12); border-radius:10px;
+      padding:9px 4px; text-align:center; backdrop-filter:blur(4px);
+    }
+    .cd-num{
+      font-family:'Orbitron',sans-serif; font-size:21px; font-weight:900;
+      color:var(--green); line-height:1;
+      text-shadow:0 0 14px rgba(0,230,118,0.55);
+    }
+    .cd-lbl{font-size:8px;color:var(--gray);margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+
+    /* ── PLATFORM SECTION ── */
+    .platform-section{
+      background:var(--card); border-radius:16px;
+      border:1px solid var(--border); padding:15px; margin-bottom:12px;
+      animation:rv .5s .07s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    .platform-section.hidden{display:none}
+    .ps-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .ps-title{font-size:14px;font-weight:800;color:var(--white)}
+    .ps-hint{font-size:11px;color:var(--gray);margin-bottom:11px;line-height:1.6}
+    .url-row{display:flex;gap:8px}
+    .url-input{
+      flex:1; background:var(--card2); border:1.5px solid var(--border);
+      border-radius:12px; padding:12px 13px; color:var(--white);
+      font-size:13px; font-family:'Rajdhani',sans-serif; outline:none;
+      transition:border-color .2s;
+    }
+    .url-input:focus{border-color:rgba(156,111,255,0.4)}
+    .url-input::placeholder{color:var(--gray2)}
+    .url-submit-btn{
+      background:linear-gradient(135deg,var(--purple),var(--gold));
+      color:#000; border:none; border-radius:12px;
+      padding:12px 16px; font-size:13px; font-weight:900;
+      cursor:pointer; font-family:'Rajdhani',sans-serif; white-space:nowrap;
+      transition:transform .15s; letter-spacing:.3px;
+    }
+    .url-submit-btn:active{transform:scale(.97)}
+
+    /* ── CHANGE PLATFORM BUTTON (tiny, floating top-right of signal box) ── */
+    .change-platform-wrap{
+      display:none; justify-content:flex-end; margin-bottom:8px;
+    }
+    .change-platform-wrap.show{display:flex}
+    .change-platform-btn{
+      display:flex; align-items:center; gap:5px;
+      background:var(--purple-dim); border:1px solid rgba(156,111,255,0.2);
+      border-radius:20px; padding:4px 12px;
+      font-size:11px; color:var(--purple2); font-weight:700;
+      cursor:pointer; font-family:'Rajdhani',sans-serif; letter-spacing:.3px;
+      transition:background .2s;
+    }
+    .change-platform-btn:hover{background:rgba(156,111,255,0.18)}
+
+    /* ── SIGNAL SECTION ── */
+    #signalSection{display:none}
+    #signalSection.visible{display:block;animation:rv .6s cubic-bezier(.22,.68,0,1.2) both}
+
+    .signal-card{
+      border-radius:22px; overflow:hidden; position:relative;
+      border:1px solid rgba(255,255,255,0.06);
+      box-shadow:0 24px 64px rgba(0,0,0,0.7);
+    }
+
+    /* gradient bg that switches with signal */
+    .signal-card.is-big  {background:linear-gradient(160deg,#071a10,#0a2018,#061210)}
+    .signal-card.is-small{background:linear-gradient(160deg,#1a1607,#201a08,#141006)}
+
+    /* colored stripe at top */
+    .sig-stripe{height:3px;width:100%;transition:background .5s}
+    .signal-card.is-big   .sig-stripe{background:linear-gradient(90deg,transparent,var(--green),var(--green2),transparent)}
+    .signal-card.is-small .sig-stripe{background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),transparent)}
+
+    .sig-body{padding:20px 16px 16px}
+
+    /* white inner card */
+    .sig-inner{
+      background:#fff; border-radius:14px;
+      padding:22px 14px 18px; text-align:center;
+      margin-bottom:16px;
+      box-shadow:0 10px 36px rgba(0,0,0,0.5);
+      position:relative;
+    }
+    .sig-word{
+      font-family:'Orbitron',sans-serif; font-weight:900;
+      font-size:clamp(50px,15vw,76px); line-height:1;
+      letter-spacing:4px; display:block;
+      transition:all .3s cubic-bezier(.22,.68,0,1.2);
+    }
+    /* BIG — green */
+    .sig-word.BIG{
+      color:#00c853;
+      -webkit-text-stroke:3px #004d20;
+      filter:drop-shadow(0 0 12px rgba(0,200,83,0.4));
+    }
+    /* SMALL — gold */
+    .sig-word.SMALL{
+      color:#e6a800;
+      -webkit-text-stroke:3px #5a3e00;
+      filter:drop-shadow(0 0 12px rgba(230,168,0,0.4));
+    }
+    .sig-id{
+      font-family:'Orbitron',sans-serif; font-weight:700;
+      font-size:clamp(10px,2.8vw,13px); color:#1a1a3a;
+      letter-spacing:1px; margin-top:12px; word-break:break-all;
+    }
+
+    /* percentage */
+    .sig-pct-row{
+      display:flex; align-items:baseline; justify-content:center; gap:5px;
+      margin-bottom:14px;
+    }
+    .sig-pct-num{
+      font-family:'Orbitron',sans-serif; font-weight:900;
+      font-size:clamp(24px,7vw,32px); line-height:1;
+      transition:color .4s;
+    }
+    .signal-card.is-big   .sig-pct-num{color:var(--green);text-shadow:0 0 20px rgba(0,230,118,0.4)}
+    .signal-card.is-small .sig-pct-num{color:var(--gold);text-shadow:0 0 20px rgba(245,197,24,0.4)}
+    .sig-pct-label{font-size:14px;font-weight:700;color:rgba(238,238,255,0.55)}
+
+    /* timer */
+    .sig-timer{margin-bottom:14px}
+    .sig-timer-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+    .sig-timer-lbl{font-size:9px;color:var(--gray);font-weight:700;letter-spacing:2px;text-transform:uppercase}
+    .sig-timer-badge{
+      font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900;
+      color:var(--green); background:var(--green-dim);
+      border:1px solid rgba(0,230,118,0.2); border-radius:6px; padding:2px 8px;
+      transition:color .4s;
+    }
+    .signal-card.is-small .sig-timer-badge{color:var(--gold);background:var(--gold-dim);border-color:rgba(245,197,24,0.2)}
+    .sig-timer-track{height:4px;background:rgba(255,255,255,0.05);border-radius:10px;overflow:hidden}
+    .sig-timer-fill{
+      height:100%; border-radius:10px; transition:width 1s linear;
+      box-shadow:0 0 8px currentColor;
+    }
+    .signal-card.is-big   .sig-timer-fill{background:var(--green)}
+    .signal-card.is-small .sig-timer-fill{background:var(--gold)}
+
+    /* previous prediction */
+    .sig-prev{
+      background:rgba(0,0,0,0.28); border-radius:14px;
+      padding:13px 15px; border:1px solid rgba(255,255,255,0.04);
+    }
+    .sig-prev-head{
+      font-size:9px; color:var(--gray); font-weight:700; letter-spacing:2px;
+      text-transform:uppercase; margin-bottom:7px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .sig-prev-head::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.05)}
+    .sig-prev-id{
+      font-family:'Orbitron',sans-serif; font-size:9px;
+      color:rgba(255,255,255,0.2); margin-bottom:8px; word-break:break-all;
+    }
+    .sig-prev-txt{
+      font-size:13px; color:rgba(238,238,255,0.6);
+      line-height:1.85; text-align:center; font-style:italic;
+    }
+    .sig-prev-txt strong{font-style:normal;font-weight:900}
+    .dir-big  {color:var(--green);font-weight:900;font-style:normal}
+    .dir-small{color:var(--gold);font-weight:900;font-style:normal}
+
+    /* ── GLOW FLASH on signal change ── */
+    @keyframes glow-big  {0%,100%{box-shadow:0 24px 64px rgba(0,0,0,0.7)}50%{box-shadow:0 24px 64px rgba(0,0,0,0.7),0 0 50px rgba(0,230,118,0.22)}}
+    @keyframes glow-small{0%,100%{box-shadow:0 24px 64px rgba(0,0,0,0.7)}50%{box-shadow:0 24px 64px rgba(0,0,0,0.7),0 0 50px rgba(245,197,24,0.22)}}
+    .signal-card.glow-big  {animation:glow-big   .5s ease-out}
+    .signal-card.glow-small{animation:glow-small .5s ease-out}
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav{
+      position:fixed; bottom:0; left:0; right:0;
+      height:var(--nav-h); z-index:200;
+      background:rgba(6,6,14,0.97); backdrop-filter:blur(24px);
+      border-top:1px solid rgba(255,255,255,0.05);
+      display:flex; align-items:stretch;
+    }
+    .nav-btn{
+      flex:1; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:3px;
+      background:none; border:none; cursor:pointer;
+      color:var(--gray); font-size:8px; font-weight:700;
+      letter-spacing:.8px; text-transform:uppercase; position:relative;
+    }
+    .nav-btn .ni{font-size:20px;line-height:1;transition:transform .2s}
+    .nav-btn.active{color:var(--purple)}
+    .nav-btn.active .ni{transform:translateY(-2px)}
+    .nav-btn.active::after{
+      content:''; position:absolute; top:0; left:18%; right:18%; height:2px;
+      border-radius:0 0 3px 3px;
+      background:linear-gradient(90deg,transparent,var(--purple),transparent);
+    }
+
+    @keyframes rv{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .hidden{display:none!important}
+  </style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingOverlay">
+  <div class="ld-ring-wrap">
+    <div class="ld-ring"></div>
+    <div class="ld-ring2"></div>
+  </div>
+  <div class="ld-txt">Checking VIP</div>
+  <div class="ld-dots">
+    <div class="ld-dot"></div>
+    <div class="ld-dot"></div>
+    <div class="ld-dot"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="hd-left">
+    <div class="live-pill">
+      <div class="live-dot"></div>
+      <span class="live-text">LIVE</span>
+    </div>
+  </div>
+  <div class="hd-title">VIP Signal</div>
+  <div class="hd-logo">
+    <img src="https://raw.githubusercontent.com/akans47g/Lucky/main/logo.jpg" alt="Logo"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='block';"/>
+    <span class="lf">SP</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- SUBSCRIPTION CARD -->
+  <div class="sub-card">
+    <div class="sc-top">
+      <div class="sc-badge"><div class="sc-dot"></div> VIP ACTIVE</div>
+      <div class="sc-name" id="activePlanName">Loading...</div>
+    </div>
+    <div class="cd-row">
+      <div class="cd-box"><div class="cd-num" id="ssDays">00</div><div class="cd-lbl">Days</div></div>
+      <div class="cd-box"><div class="cd-num" id="ssHrs">00</div><div class="cd-lbl">Hrs</div></div>
+      <div class="cd-box"><div class="cd-num" id="ssMin">00</div><div class="cd-lbl">Min</div></div>
+      <div class="cd-box"><div class="cd-num" id="ssSec">00</div><div class="cd-lbl">Sec</div></div>
+    </div>
+  </div>
+
+  <!-- PLATFORM URL (hides completely after submit) -->
+  <div class="platform-section" id="platformSection">
+    <div class="ps-head">
+      <span>🌐</span>
+      <span class="ps-title">Enter Your Trading Platform</span>
+    </div>
+    <div class="ps-hint">Jis website par aap trading karte ho us ka URL dale</div>
+    <div class="url-row">
+      <input class="url-input" type="url" id="platformUrl" placeholder="https://your-platform.com"/>
+      <button class="url-submit-btn" onclick="submitPlatform()">Submit</button>
+    </div>
+  </div>
+
+  <!-- SIGNAL SECTION -->
+  <div id="signalSection">
+
+    <!-- Change platform — only a small button, no URL text -->
+    <div class="change-platform-wrap" id="changePlatformWrap">
+      <button class="change-platform-btn" onclick="changePlatform()">
+        🔄 Change Platform
+      </button>
+    </div>
+
+    <!-- Signal Card -->
+    <div class="signal-card is-big" id="signalCard">
+      <div class="sig-stripe" id="sigStripe"></div>
+      <div class="sig-body">
+
+        <!-- White inner card: BIG/SMALL + ID -->
+        <div class="sig-inner">
+          <span class="sig-word BIG" id="sigWord">BIG</span>
+          <div class="sig-id" id="sigId">20260602100019371</div>
+        </div>
+
+        <!-- Percentage -->
+        <div class="sig-pct-row">
+          <span class="sig-pct-num" id="sigPctNum">76</span>
+          <span class="sig-pct-label">% Chance Of <span id="sigPctDir">Big</span></span>
+        </div>
+
+        <!-- Timer -->
+        <div class="sig-timer">
+          <div class="sig-timer-top">
+            <span class="sig-timer-lbl">Next Signal In</span>
+            <span class="sig-timer-badge" id="sigTimerBadge">60s</span>
+          </div>
+          <div class="sig-timer-track">
+            <div class="sig-timer-fill" id="sigTimerFill" style="width:100%"></div>
+          </div>
+        </div>
+
+        <!-- Previous prediction -->
+        <div class="sig-prev">
+          <div class="sig-prev-head">📋 Previous Prediction</div>
+          <div class="sig-prev-id" id="sigPrevId"></div>
+          <div class="sig-prev-txt" id="sigPrevTxt"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn" onclick="location.href='index.html'"><span class="ni">🏠</span>Home</button>
+  <button class="nav-btn active"><span class="ni">💎</span>VIP Shot</button>
+  <button class="nav-btn" onclick="location.href='proof.html'"><span class="ni">📊</span>Proof</button>
+  <button class="nav-btn" onclick="location.href='account.html'"><span class="ni">👤</span>Account</button>
+</nav>
+
+<!-- ══ SIGNAL LOGIC ══ -->
+<script>
+/* ════════════════════════════════════════════
+   SEEDED RANDOM — FIX
+   Math.sin based — works on ALL browsers
+   Properly alternates BIG/SMALL each minute
+════════════════════════════════════════════ */
+function seededRand(seed) {
+  /* Mulberry32 — simple, fast, well-distributed */
+  let t = (seed + 0x6D2B79F5) >>> 0;
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  t = ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  return t;
+}
+
+/* BACKUP: if Math.imul causes issues, use sin-based */
+function seededRandSafe(seed) {
+  const s = Math.sin(seed * 127.1 + 311.7) * 43758.5453123;
+  return s - Math.floor(s);
+}
+
+/* Use safe version always */
+function rand(seed){ return seededRandSafe(seed); }
+
+function getMinuteKey(){ return Math.floor(Date.now() / 60000); }
+
+/* Test: verify randomness — log 10 consecutive values */
+(function testRand(){
+  const key = getMinuteKey();
+  const results = [];
+  for(let i=0;i<10;i++){
+    results.push(rand(key+i) > 0.5 ? 'BIG' : 'SMALL');
+  }
+  console.log('Signal test (10 consecutive minutes):', results.join(', '));
+})();
+
+function genSignal(mKey){
+  const r   = rand(mKey);
+  const dir = r > 0.5 ? 'BIG' : 'SMALL';
+  const pct = Math.floor(rand(mKey + 12345) * 26) + 60; /* 60–85 */
+  return { dir, pct };
+}
+
+function genId(mKey){
+  const d  = new Date();
+  const dt = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+  return `${dt}10001${String((mKey % 9000) + 1000)}`;
+}
+
+function genPrevPct(mKey){
+  return Math.floor(rand(mKey - 1 + 99999) * 31) + 60; /* 60–90 */
+}
+
+/* ════════════════════════════════════════════
+   UPDATE SIGNAL UI
+════════════════════════════════════════════ */
+function updateSignal(){
+  const mKey    = getMinuteKey();
+  const cur     = genSignal(mKey);
+  const prev    = genSignal(mKey - 1);
+  const curId   = genId(mKey);
+  const prevId  = genId(mKey - 1);
+  const prevPct = genPrevPct(mKey);
+
+  const card = document.getElementById('signalCard');
+
+  /* Word + class */
+  const wEl = document.getElementById('sigWord');
+  wEl.textContent = cur.dir;
+  wEl.className   = `sig-word ${cur.dir}`;
+
+  /* Card bg class */
+  card.className = `signal-card ${cur.dir === 'BIG' ? 'is-big' : 'is-small'}`;
+
+  /* ID */
+  document.getElementById('sigId').textContent = curId;
+
+  /* Percentage */
+  document.getElementById('sigPctNum').textContent = cur.pct;
+  document.getElementById('sigPctDir').textContent = cur.dir === 'BIG' ? 'Big' : 'Small';
+
+  /* Previous */
+  document.getElementById('sigPrevId').textContent = prevId;
+  const pCls = prev.dir === 'BIG' ? 'dir-big' : 'dir-small';
+  const pTxt = prev.dir === 'BIG' ? 'Big' : 'Small';
+  document.getElementById('sigPrevTxt').innerHTML =
+    `I had mentioned <span class="${pCls}">${pTxt}</span><br>` +
+    `in the earlier production too,<br>` +
+    `And on <strong>${prevPct}%+</strong> platforms<br>` +
+    `it appeared as <span class="${pCls}">${pTxt}</span> only`;
+
+  /* Glow flash */
+  const gc = cur.dir === 'BIG' ? 'glow-big' : 'glow-small';
+  card.classList.remove('glow-big', 'glow-small');
+  void card.offsetWidth;
+  card.classList.add(gc);
+  setTimeout(() => card.classList.remove(gc), 500);
+
+  console.log(`[Signal] ${cur.dir} | ${cur.pct}% | ID: ${curId}`);
+}
+
+/* ════════════════════════════════════════════
+   TIMER — updates every second
+════════════════════════════════════════════ */
+let _timerIv = null;
+let _lastMinKey = -1;
+
+function startTimer(){
+  if(_timerIv) clearInterval(_timerIv);
+  _lastMinKey = getMinuteKey();
+
+  function tick(){
+    const now     = Date.now();
+    const secLeft = Math.ceil((60000 - (now % 60000)) / 1000);
+    const pct     = (secLeft / 60) * 100;
+
+    document.getElementById('sigTimerBadge').textContent = secLeft + 's';
+    document.getElementById('sigTimerFill').style.width  = pct + '%';
+
+    /* Minute changed → update signal */
+    const curMinKey = getMinuteKey();
+    if(curMinKey !== _lastMinKey){
+      _lastMinKey = curMinKey;
+      updateSignal();
+    }
+  }
+
+  tick();
+  _timerIv = setInterval(tick, 1000);
+}
+
+/* ════════════════════════════════════════════
+   SUBSCRIPTION COUNTDOWN
+════════════════════════════════════════════ */
+let _subIv = null;
+window.startSubCountdown = function(expiresAt){
+  if(_subIv) clearInterval(_subIv);
+  function tick(){
+    const diff = expiresAt - Date.now();
+    if(diff <= 0){
+      clearInterval(_subIv);
+      showToast('⚠️ Plan expire ho gaya! Renew karo.', 'warn');
+      setTimeout(() => window.location.replace('subs.html'), 2500);
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000)  / 60000);
+    const s = Math.floor((diff % 60000)    / 1000);
+    document.getElementById('ssDays').textContent = String(d).padStart(2,'0');
+    document.getElementById('ssHrs').textContent  = String(h).padStart(2,'0');
+    document.getElementById('ssMin').textContent  = String(m).padStart(2,'0');
+    document.getElementById('ssSec').textContent  = String(s).padStart(2,'0');
+  }
+  tick();
+  _subIv = setInterval(tick, 1000);
+};
+
+/* ════════════════════════════════════════════
+   PLATFORM URL
+════════════════════════════════════════════ */
+window.submitPlatform = function(){
+  const val = document.getElementById('platformUrl').value.trim();
+  if(!val || (!val.startsWith('http://') && !val.startsWith('https://'))){
+    showToast('Valid URL dalo (https:// se shuru hona chahiye)', 'warn');
+    return;
+  }
+  localStorage.setItem('sp_platformUrl', val);
+  activatePlatform();
+  showToast('✅ Platform saved! Signal active hai.', 'success');
+};
+
+window.activatePlatform = function(){
+  /* Hide platform section completely */
+  document.getElementById('platformSection').classList.add('hidden');
+
+  /* Show "Change Platform" button only (no URL) */
+  document.getElementById('changePlatformWrap').classList.add('show');
+
+  /* Show signal box */
+  const sec = document.getElementById('signalSection');
+  sec.style.display = 'block';
+  sec.classList.add('visible');
+
+  /* Load signal */
+  updateSignal();
+  startTimer();
+};
+
+window.changePlatform = function(){
+  localStorage.removeItem('sp_platformUrl');
+
+  /* Show platform section */
+  document.getElementById('platformSection').classList.remove('hidden');
+  document.getElementById('platformUrl').value = '';
+
+  /* Hide change btn + signal */
+  document.getElementById('changePlatformWrap').classList.remove('show');
+  const sec = document.getElementById('signalSection');
+  sec.style.display = 'none';
+  sec.classList.remove('visible');
+
+  if(_timerIv) clearInterval(_timerIv);
+};
+
+/* ════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════ */
+function showToast(msg, type='info'){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = `toast ${type}`;
+  t.classList.remove('hidden');
+  void t.offsetWidth;
+  t.classList.add('show');
+  setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => t.classList.add('hidden'), 400);
+  }, 3200);
+}
+</script>
+
+<!-- ══ FIREBASE — Subscription Check ══ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyDh_fzIv1_YLP6X8DzjFdXvvFQv2sciFzU",
+  authDomain:"lucky-b3886.firebaseapp.com",
+  projectId:"lucky-b3886",
+  storageBucket:"lucky-b3886.firebasestorage.app",
+  messagingSenderId:"314352804588",
+  appId:"1:314352804588:web:96697e2668a95c19affbc9"
+});
+const db   = getFirestore(app);
+const auth = getAuth(app);
+
+function hideLoader(){ document.getElementById('loadingOverlay').classList.add('hidden'); }
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user){ window.location.replace('login.html'); return; }
+
+  try{
+    const snap = await getDoc(doc(db,'users',user.uid));
+    const data = snap.exists() ? snap.data() : {};
+    const exp  = data.planExpiresAt;
+    let   expMs = exp ? (exp.toMillis ? exp.toMillis() : new Date(exp).getTime()) : 0;
+
+    if(!expMs || expMs <= Date.now()){
+      window.location.replace('subs.html'); return;
+    }
+
+    localStorage.setItem('sp_planExpires', expMs);
+    localStorage.setItem('sp_planName',    data.planName || data.plan || 'VIP');
+    localStorage.setItem('sp_coins',       data.coins ?? 0);
+
+    document.getElementById('activePlanName').textContent = data.planName || data.plan || 'VIP';
+    window.startSubCountdown(expMs);
+    hideLoader();
+
+    /* If URL already saved → directly show signal */
+    if(localStorage.getItem('sp_platformUrl')) window.activatePlatform();
+
+  } catch(err){
+    console.error(err);
+    const le = parseInt(localStorage.getItem('sp_planExpires') || '0');
+    if(le > Date.now()){
+      document.getElementById('activePlanName').textContent = localStorage.getItem('sp_planName') || 'VIP';
+      window.startSubCountdown(le);
+      hideLoader();
+      if(localStorage.getItem('sp_platformUrl')) window.activatePlatform();
+    } else {
+      window.location.replace('subs.html');
+    }
+  }
+});
+</script>
+
+</body>
+</html>
