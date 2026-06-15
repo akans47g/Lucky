@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Plan | SignalPro AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#14142a; --card:#1e1e38; --card2:#26264a; --card3:#2e2e58;
+      --border:rgba(255,255,255,0.08);
+      --gold:#f5c518; --gold2:#ffd740;
+      --green:#00e676; --red:#ff4757;
+      --purple:#ce93d8; --purple-d:#9c6fff;
+      --orange:#ff9100; --cyan:#00bcd4;
+      --white:#f4f4ff; --gray:#9090b8; --gray2:#4a4a78;
+      --nav-h:66px;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      background:var(--bg); color:var(--white);
+      font-family:'Rajdhani','Noto Sans Devanagari',sans-serif;
+      min-height:100vh; padding-bottom:calc(var(--nav-h)+16px);
+      overflow-x:hidden;
+    }
+    body::after{
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:radial-gradient(circle,rgba(156,111,255,0.06) 1px,transparent 1px);
+      background-size:28px 28px;
+    }
+
+    /* ── LOADING ── */
+    #loadingOverlay{
+      position:fixed; inset:0; z-index:900; background:var(--bg);
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+    }
+    #loadingOverlay.hidden{display:none}
+    .ld-ring{width:48px;height:48px;border-radius:50%;border:3px solid rgba(245,197,24,.12);border-top-color:var(--gold);animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .ld-txt{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--gray);letter-spacing:3px}
+
+    /* ── HEADER ── */
+    header{
+      position:sticky; top:0; z-index:200; height:58px;
+      background:rgba(20,20,42,.96); backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(245,197,24,.25);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 16px; box-shadow:0 4px 20px rgba(0,0,0,.4);
+    }
+    .hd-left{display:flex;align-items:center;gap:8px}
+    .live-pill{display:flex;align-items:center;gap:5px;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.3);border-radius:20px;padding:3px 10px}
+    .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:lp 1.3s ease-in-out infinite}
+    @keyframes lp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.5}}
+    .live-text{font-size:10px;color:var(--green);font-weight:700;letter-spacing:1.5px}
+    .hd-title{
+      font-family:'Orbitron',sans-serif; font-size:clamp(11px,2.8vw,15px);
+      font-weight:900; letter-spacing:1px;
+      background:linear-gradient(90deg,var(--gold),var(--gold2),var(--orange),var(--gold));
+      background-size:300%; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      animation:shimmer 3s linear infinite;
+    }
+    @keyframes shimmer{0%{background-position:0%}100%{background-position:300%}}
+    .hd-logo{
+      width:40px;height:40px;border-radius:50%;border:2px solid var(--gold);
+      box-shadow:0 0 12px rgba(245,197,24,.4);overflow:hidden;background:var(--card2);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .hd-logo img{width:100%;height:100%;object-fit:cover;display:block}
+    .hd-logo .lf{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:900;color:var(--gold);display:none}
+
+    /* ── MAIN ── */
+    main{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:16px 14px}
+
+    /* ════════════════════
+       ACTIVE PLAN STATE
+    ════════════════════ */
+
+    /* ── PLAN HERO CARD ── */
+    .plan-hero{
+      border-radius:22px; padding:22px 18px; margin-bottom:14px;
+      position:relative; overflow:hidden;
+      border:1px solid; text-align:center;
+      animation:rv .5s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    /* color per plan */
+    .plan-hero.p7  {background:linear-gradient(135deg,#0d1520,#0a1a2a);border-color:rgba(0,188,212,.3)}
+    .plan-hero.p14 {background:linear-gradient(135deg,#0d1a10,#0a2014);border-color:rgba(0,230,118,.3)}
+    .plan-hero.p28 {background:linear-gradient(135deg,#1a1507,#201a08);border-color:rgba(245,197,24,.4)}
+    .plan-hero.p56 {background:linear-gradient(135deg,#150d20,#1c1030);border-color:rgba(156,111,255,.35)}
+
+    .plan-hero::before{
+      content:''; position:absolute; top:-30%; left:-10%; width:120%; height:160%;
+      border-radius:50%;
+      animation:orb-glow 6s ease-in-out infinite alternate; pointer-events:none;
+    }
+    .plan-hero.p7 ::before{background:radial-gradient(ellipse at 50% 50%,rgba(0,188,212,.1) 0%,transparent 65%)}
+    .plan-hero.p14::before{background:radial-gradient(ellipse at 50% 50%,rgba(0,230,118,.1) 0%,transparent 65%)}
+    .plan-hero.p28::before{background:radial-gradient(ellipse at 50% 50%,rgba(245,197,24,.1) 0%,transparent 65%)}
+    .plan-hero.p56::before{background:radial-gradient(ellipse at 50% 50%,rgba(156,111,255,.1) 0%,transparent 65%)}
+    @keyframes orb-glow{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.1) translate(4px,-4px)}}
+
+    /* shimmer sweep */
+    .plan-hero::after{
+      content:''; position:absolute; top:0; left:-100%; width:55%; height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.04),transparent);
+      animation:sweep 5s ease-in-out infinite;
+    }
+    @keyframes sweep{0%{left:-100%}60%,100%{left:150%}}
+
+    .ph-badge{
+      display:inline-flex; align-items:center; gap:5px;
+      border-radius:20px; padding:4px 14px; margin-bottom:12px;
+      font-size:10px; font-weight:900; letter-spacing:1.5px; text-transform:uppercase;
+      position:relative;
+    }
+    .plan-hero.p7  .ph-badge{background:rgba(0,188,212,.12);border:1px solid rgba(0,188,212,.3);color:#00bcd4}
+    .plan-hero.p14 .ph-badge{background:rgba(0,230,118,.12);border:1px solid rgba(0,230,118,.3);color:var(--green)}
+    .plan-hero.p28 .ph-badge{background:rgba(245,197,24,.12);border:1px solid rgba(245,197,24,.35);color:var(--gold)}
+    .plan-hero.p56 .ph-badge{background:rgba(156,111,255,.12);border:1px solid rgba(156,111,255,.3);color:var(--purple-d)}
+
+    .ph-dot{width:6px;height:6px;border-radius:50%;animation:lp 1.3s ease-in-out infinite}
+    .plan-hero.p7  .ph-dot{background:#00bcd4;box-shadow:0 0 6px #00bcd4}
+    .plan-hero.p14 .ph-dot{background:var(--green);box-shadow:0 0 6px var(--green)}
+    .plan-hero.p28 .ph-dot{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+    .plan-hero.p56 .ph-dot{background:var(--purple-d);box-shadow:0 0 8px var(--purple-d)}
+
+    .ph-name{
+      font-family:'Orbitron',sans-serif; font-weight:900;
+      font-size:clamp(22px,6vw,30px); line-height:1.1; margin-bottom:4px;
+      position:relative;
+    }
+    .plan-hero.p7  .ph-name{color:#00bcd4;text-shadow:0 0 24px rgba(0,188,212,.4)}
+    .plan-hero.p14 .ph-name{color:var(--green);text-shadow:0 0 24px rgba(0,230,118,.4)}
+    .plan-hero.p28 .ph-name{color:var(--gold);text-shadow:0 0 24px rgba(245,197,24,.5)}
+    .plan-hero.p56 .ph-name{color:var(--purple-d);text-shadow:0 0 24px rgba(156,111,255,.5)}
+
+    .ph-sub{font-size:13px;color:var(--gray);position:relative;margin-bottom:16px}
+
+    /* ── COUNTDOWN ── */
+    .countdown-grid{
+      display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
+      position:relative;
+    }
+    .cd-box{
+      background:rgba(0,0,0,.3); border-radius:12px; padding:12px 6px;
+      text-align:center; border:1px solid rgba(255,255,255,.06);
+      backdrop-filter:blur(4px);
+    }
+    .cd-num{
+      font-family:'Orbitron',sans-serif; font-weight:900;
+      font-size:24px; line-height:1;
+      animation:num-pulse 2s ease-in-out infinite alternate;
+    }
+    .plan-hero.p7  .cd-num{color:#00bcd4;text-shadow:0 0 14px rgba(0,188,212,.5)}
+    .plan-hero.p14 .cd-num{color:var(--green);text-shadow:0 0 14px rgba(0,230,118,.5)}
+    .plan-hero.p28 .cd-num{color:var(--gold);text-shadow:0 0 14px rgba(245,197,24,.5)}
+    .plan-hero.p56 .cd-num{color:var(--purple-d);text-shadow:0 0 14px rgba(156,111,255,.5)}
+    @keyframes num-pulse{from{opacity:.85}to{opacity:1}}
+    .cd-lbl{font-size:9px;color:var(--gray);margin-top:5px;letter-spacing:1px;text-transform:uppercase}
+
+    /* ── PROGRESS BAR ── */
+    .progress-card{
+      background:var(--card); border-radius:18px;
+      border:1px solid var(--border); padding:16px 16px 14px;
+      margin-bottom:14px;
+      animation:rv .5s .08s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    .pc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .pc-title{font-size:13px;font-weight:800;color:var(--white)}
+    .pc-pct{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900}
+    .progress-track{
+      height:10px; background:rgba(255,255,255,.06);
+      border-radius:10px; overflow:hidden; margin-bottom:10px;
+    }
+    .progress-fill{
+      height:100%; border-radius:10px;
+      transition:width 1.2s ease;
+      position:relative; overflow:hidden;
+    }
+    .progress-fill::after{
+      content:''; position:absolute; top:0; left:-100%; width:60%; height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+      animation:sweep 2s ease-in-out infinite;
+    }
+    .pc-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--gray);font-weight:700}
+
+    /* ── PLAN DETAILS GRID ── */
+    .details-grid{
+      display:grid; grid-template-columns:1fr 1fr; gap:10px;
+      margin-bottom:14px;
+    }
+    .detail-card{
+      background:var(--card); border-radius:16px;
+      border:1px solid var(--border); padding:14px 13px;
+      position:relative; overflow:hidden;
+      animation:rv .5s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    .detail-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:16px 0 0 16px}
+    .dc-icon{font-size:22px;margin-bottom:8px;display:block}
+    .dc-label{font-size:10px;color:var(--gray);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:4px}
+    .dc-value{font-size:14px;font-weight:800;color:var(--white);line-height:1.4}
+    .dc-value.gold{color:var(--gold)} .dc-value.green{color:var(--green)}
+    .dc-value.red{color:var(--red)}   .dc-value.purple{color:var(--purple-d)}
+    .dc-value.cyan{color:#00bcd4}
+
+    .detail-card:nth-child(1)::before{background:var(--gold)}
+    .detail-card:nth-child(2)::before{background:var(--green)}
+    .detail-card:nth-child(3)::before{background:var(--purple-d)}
+    .detail-card:nth-child(4)::before{background:var(--red)}
+    .detail-card:nth-child(1){animation-delay:.10s}
+    .detail-card:nth-child(2){animation-delay:.15s}
+    .detail-card:nth-child(3){animation-delay:.20s}
+    .detail-card:nth-child(4){animation-delay:.25s}
+
+    /* ── COINS CARD ── */
+    .coins-card{
+      background:var(--card); border-radius:18px;
+      border:1px solid rgba(245,197,24,.25);
+      padding:15px 16px; margin-bottom:14px;
+      display:flex; align-items:center; gap:14px;
+      position:relative; overflow:hidden;
+      animation:rv .5s .30s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    .coins-card::before{
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg,rgba(245,197,24,.05),transparent);
+    }
+    .coins-icon{font-size:36px;animation:coin-flip 5s ease-in-out infinite;flex-shrink:0}
+    @keyframes coin-flip{0%,80%,100%{transform:rotateY(0)}85%{transform:rotateY(90deg)}90%{transform:rotateY(0)}}
+    .coins-info{position:relative}
+    .coins-label{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+    .coins-amount{font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:var(--white);line-height:1.1}
+    .coins-amount sup{font-size:14px;color:var(--gold);vertical-align:super}
+    .coins-sub{font-size:11px;color:var(--gray);margin-top:3px}
+
+    /* ── RENEW BUTTON ── */
+    .renew-btn{
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      width:100%; padding:15px; border:none; border-radius:16px;
+      font-family:'Orbitron',sans-serif; font-size:14px; font-weight:900; letter-spacing:.5px;
+      cursor:pointer; position:relative; overflow:hidden;
+      transition:transform .15s; margin-bottom:6px;
+      text-decoration:none; color:#000;
+    }
+    .renew-btn.active-plan{
+      background:linear-gradient(135deg,var(--purple-d),var(--gold));
+      background-size:200%;
+      animation:btn-shadow 2s ease-in-out infinite, btn-shimmer 3s linear infinite;
+    }
+    @keyframes btn-shadow{0%,100%{box-shadow:0 6px 24px rgba(156,111,255,.3)}50%{box-shadow:0 8px 36px rgba(245,197,24,.5),0 0 0 6px rgba(245,197,24,.07)}}
+    @keyframes btn-shimmer{0%{background-position:0%}100%{background-position:200%}}
+    .renew-btn::after{
+      content:''; position:absolute; top:0; left:-100%; width:55%; height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
+      animation:sweep 2.5s ease-in-out infinite;
+    }
+    .renew-btn:active{transform:scale(.98)}
+    .renew-note{text-align:center;font-size:11px;color:var(--gray);padding:0 10px}
+
+    /* ════════════════════
+       NO PLAN STATE
+    ════════════════════ */
+    .no-plan-section{display:none; animation:rv .5s cubic-bezier(.22,.68,0,1.2) both}
+    .no-plan-section.show{display:block}
+
+    .no-plan-card{
+      border-radius:22px; padding:32px 20px;
+      background:linear-gradient(135deg,#150d20,#1a1030,#0d0a1a);
+      border:1px solid rgba(156,111,255,.2);
+      text-align:center; position:relative; overflow:hidden;
+      box-shadow:0 12px 40px rgba(0,0,0,.5);
+      margin-bottom:14px;
+    }
+    .no-plan-card::before{
+      content:''; position:absolute; inset:0; pointer-events:none;
+      background:radial-gradient(ellipse at 50% 30%,rgba(156,111,255,.08) 0%,transparent 65%);
+    }
+    .npc-emoji{font-size:52px;display:block;margin-bottom:14px;animation:float 3s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .npc-title{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--white);margin-bottom:8px;position:relative}
+    .npc-sub{font-size:13px;color:var(--gray);line-height:1.7;position:relative;margin-bottom:20px}
+    .npc-sub span{color:var(--gold);font-weight:700}
+
+    .npc-features{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;position:relative}
+    .npc-feat{
+      display:flex;align-items:center;gap:10px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+      border-radius:12px;padding:10px 13px;
+      font-size:13px;color:rgba(238,238,255,.8);font-weight:700;text-align:left;
+    }
+    .npc-feat span{font-size:18px;flex-shrink:0}
+
+    .subscribe-btn{
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      width:100%; padding:16px; border:none; border-radius:16px;
+      background:linear-gradient(135deg,var(--gold),var(--orange),var(--gold));
+      background-size:200%;
+      color:#000; font-family:'Orbitron',sans-serif;
+      font-size:15px; font-weight:900; letter-spacing:.5px;
+      cursor:pointer; position:relative; overflow:hidden;
+      animation:cta-shadow 2s ease-in-out infinite, btn-shimmer 3s linear infinite;
+      transition:transform .15s; text-decoration:none;
+    }
+    @keyframes cta-shadow{0%,100%{box-shadow:0 6px 28px rgba(245,197,24,.3)}50%{box-shadow:0 8px 40px rgba(245,197,24,.6),0 0 0 8px rgba(245,197,24,.07)}}
+    .subscribe-btn::after{
+      content:''; position:absolute; top:0; left:-100%; width:55%; height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+      animation:sweep 2.5s ease-in-out infinite;
+    }
+    .subscribe-btn:active{transform:scale(.98)}
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav{
+      position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);z-index:200;
+      background:rgba(20,20,42,.97);backdrop-filter:blur(20px);
+      border-top:1px solid rgba(245,197,24,.22);display:flex;align-items:stretch;
+    }
+    .nav-btn{
+      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+      background:none;border:none;cursor:pointer;color:var(--gray);font-size:9px;font-weight:700;
+      letter-spacing:.8px;text-transform:uppercase;position:relative;
+    }
+    .nav-btn .ni{font-size:22px;line-height:1;transition:transform .2s}
+    .nav-btn.active{color:var(--orange)}
+    .nav-btn.active .ni{transform:translateY(-2px)}
+    .nav-btn.active::after{
+      content:'';position:absolute;top:0;left:15%;right:15%;height:2px;border-radius:0 0 4px 4px;
+      background:linear-gradient(90deg,transparent,var(--orange),transparent);
+    }
+
+    @keyframes rv{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+    .hidden{display:none!important}
+  </style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingOverlay">
+  <div class="ld-ring"></div>
+  <div class="ld-txt">LOADING PLAN...</div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="hd-left">
+    <div class="live-pill"><div class="live-dot"></div><span class="live-text">ACTIVE</span></div>
+  </div>
+  <div class="hd-title">My Plan</div>
+  <div class="hd-logo">
+    <img src="https://raw.githubusercontent.com/akans47g/Lucky/main/logo.jpg" alt="Logo"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='block';"/>
+    <span class="lf">SP</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ════ ACTIVE PLAN STATE ════ -->
+  <div id="activePlanSection" class="hidden">
+
+    <!-- Plan Hero -->
+    <div class="plan-hero" id="planHero">
+      <div class="ph-badge" id="phBadge">
+        <div class="ph-dot"></div>
+        <span id="phBadgeTxt">VIP ACTIVE</span>
+      </div>
+      <div class="ph-name" id="phName">28 Days Premium</div>
+      <div class="ph-sub" id="phSub">Premium VIP Plan</div>
+      <div class="countdown-grid">
+        <div class="cd-box"><div class="cd-num" id="cdDays">00</div><div class="cd-lbl">Days</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdHrs">00</div><div class="cd-lbl">Hrs</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdMin">00</div><div class="cd-lbl">Min</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdSec">00</div><div class="cd-lbl">Sec</div></div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-card">
+      <div class="pc-head">
+        <span class="pc-title">⏳ Plan Progress</span>
+        <span class="pc-pct" id="progressPct" style="color:var(--gold)">0% used</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="pc-labels">
+        <span id="progressStart">Start: —</span>
+        <span id="progressEnd">End: —</span>
+      </div>
+    </div>
+
+    <!-- Details Grid -->
+    <div class="details-grid">
+
+      <div class="detail-card">
+        <span class="dc-icon">📅</span>
+        <div class="dc-label">Plan Liya</div>
+        <div class="dc-value gold" id="dcActivated">—</div>
+      </div>
+
+      <div class="detail-card">
+        <span class="dc-icon">⏰</span>
+        <div class="dc-label">Expire Hoga</div>
+        <div class="dc-value green" id="dcExpires">—</div>
+      </div>
+
+      <div class="detail-card">
+        <span class="dc-icon">📆</span>
+        <div class="dc-label">Plan Duration</div>
+        <div class="dc-value purple" id="dcDays">— Days</div>
+      </div>
+
+      <div class="detail-card">
+        <span class="dc-icon">🕐</span>
+        <div class="dc-label">Bacha Hua Time</div>
+        <div class="dc-value" id="dcRemaining">—</div>
+      </div>
+
+    </div>
+
+    <!-- Coins -->
+    <div class="coins-card">
+      <div class="coins-icon">🪙</div>
+      <div class="coins-info">
+        <div class="coins-label">💰 Coin Balance</div>
+        <div class="coins-amount"><sup>₹</sup><span id="coinsVal">0</span></div>
+        <div class="coins-sub">1 Coin = ₹1 value</div>
+      </div>
+    </div>
+
+    <!-- Renew / Upgrade -->
+    <a class="renew-btn active-plan" href="subs.html">
+      🔄 Renew / Upgrade Plan
+    </a>
+    <p class="renew-note">Plan expire hone se pehle renew karo — signals uninterrupted rahenge</p>
+
+  </div>
+
+  <!-- ════ NO PLAN STATE ════ -->
+  <div class="no-plan-section" id="noPlanSection">
+    <div class="no-plan-card">
+      <span class="npc-emoji">💎</span>
+      <div class="npc-title">Koi Active Plan Nahi</div>
+      <div class="npc-sub">
+        Abhi aapka koi VIP plan active nahi hai.<br>
+        <span>Subscribe karo aur AI signals se profit kamao!</span>
+      </div>
+      <div class="npc-features">
+        <div class="npc-feat"><span>🤖</span> AI-Powered 1-Minute Signals</div>
+        <div class="npc-feat"><span>📈</span> BIG / SMALL Accurate Prediction</div>
+        <div class="npc-feat"><span>⚡</span> Instant VIP Access</div>
+        <div class="npc-feat"><span>💰</span> Roz Profit Kamao</div>
+      </div>
+      <a class="subscribe-btn" href="subs.html">
+        💎 Subscribe Now — Plans dekho
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn" onclick="location.href='index.html'"><span class="ni">🏠</span>Home</button>
+  <button class="nav-btn" onclick="location.href='vip.html'"><span class="ni">💎</span>VIP Shot</button>
+  <button class="nav-btn" onclick="location.href='proof.html'"><span class="ni">📊</span>Proof</button>
+  <button class="nav-btn active" onclick="location.href='account.html'"><span class="ni">👤</span>Account</button>
+</nav>
+
+<!-- ══ FIREBASE ══ -->
+<script type="module">
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const app  = initializeApp({
+  apiKey:"AIzaSyDh_fzIv1_YLP6X8DzjFdXvvFQv2sciFzU",
+  authDomain:"lucky-b3886.firebaseapp.com",
+  projectId:"lucky-b3886",
+  storageBucket:"lucky-b3886.firebasestorage.app",
+  messagingSenderId:"314352804588",
+  appId:"1:314352804588:web:96697e2668a95c19affbc9"
+});
+const db   = getFirestore(app);
+const auth = getAuth(app);
+
+/* ── PLAN CLASS MAP ── */
+const PLAN_CLASS = {
+  '7days':'p7', '14days':'p14', '28days':'p28', '56days':'p56',
+};
+/* fallback by days */
+function planClass(id, days){
+  if(PLAN_CLASS[id]) return PLAN_CLASS[id];
+  if(days<=7)  return 'p7';
+  if(days<=14) return 'p14';
+  if(days<=28) return 'p28';
+  return 'p56';
+}
+
+/* ── PROGRESS FILL COLOR ── */
+const PROG_COLORS = {
+  p7:'linear-gradient(90deg,#00bcd4,#0097a7)',
+  p14:'linear-gradient(90deg,#00e676,#00c853)',
+  p28:'linear-gradient(90deg,#f5c518,#ff9100)',
+  p56:'linear-gradient(90deg,#9c6fff,#c084fc)',
+};
+const PCT_COLORS = {p7:'#00bcd4',p14:'#00e676',p28:'#f5c518',p56:'#9c6fff'};
+
+/* ── FORMAT DATE ── */
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+}
+function fmtDateTime(ts){
+  if(!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})
+       + ' ' + d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+}
+function toMs(ts){
+  if(!ts) return 0;
+  return ts.toMillis ? ts.toMillis() : new Date(ts).getTime();
+}
+
+/* ── COUNTDOWN ── */
+let _cdIv = null;
+function startCountdown(expiresMs){
+  if(_cdIv) clearInterval(_cdIv);
+  function tick(){
+    const diff = expiresMs - Date.now();
+    if(diff <= 0){
+      clearInterval(_cdIv);
+      document.getElementById('cdDays').textContent = '00';
+      document.getElementById('cdHrs').textContent  = '00';
+      document.getElementById('cdMin').textContent  = '00';
+      document.getElementById('cdSec').textContent  = '00';
+      document.getElementById('dcRemaining').textContent = 'Expired';
+      document.getElementById('dcRemaining').style.color = 'var(--red)';
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000)  / 60000);
+    const s = Math.floor((diff % 60000)    / 1000);
+    document.getElementById('cdDays').textContent = String(d).padStart(2,'0');
+    document.getElementById('cdHrs').textContent  = String(h).padStart(2,'0');
+    document.getElementById('cdMin').textContent  = String(m).padStart(2,'0');
+    document.getElementById('cdSec').textContent  = String(s).padStart(2,'0');
+
+    /* Remaining text */
+    let rem = '';
+    if(d > 0) rem = `${d} din ${h} ghante`;
+    else if(h > 0) rem = `${h} ghante ${m} min`;
+    else rem = `${m} min ${s} sec`;
+    document.getElementById('dcRemaining').textContent = rem;
+
+    /* Color warning when < 2 days */
+    const remEl = document.getElementById('dcRemaining');
+    remEl.className = `dc-value ${d < 2 ? 'red' : d < 5 ? 'gold' : 'green'}`;
+  }
+  tick();
+  _cdIv = setInterval(tick, 1000);
+}
+
+/* ── COIN COUNTER ── */
+function animateCoins(target){
+  const el = document.getElementById('coinsVal');
+  let cur = 0; const step = Math.max(1, Math.ceil(target / 50));
+  const iv = setInterval(()=>{
+    cur += step; if(cur >= target){ cur = target; clearInterval(iv); }
+    el.textContent = cur;
+  }, 18);
+}
+
+/* ── SHOW ACTIVE PLAN ── */
+function showActivePlan(data){
+  const planId  = data.plan || '28days';
+  const pc      = planClass(planId, data.planDays);
+  const expMs   = toMs(data.planExpiresAt);
+  const actMs   = toMs(data.planActivatedAt);
+  const totalMs = data.planDays ? data.planDays * 86400000 : (expMs - actMs);
+  const usedMs  = actMs ? Math.max(0, Date.now() - actMs) : 0;
+  const usedPct = Math.min(100, Math.round((usedMs / totalMs) * 100));
+
+  /* Plan hero class */
+  document.getElementById('planHero').className   = `plan-hero ${pc}`;
+  document.getElementById('phName').textContent   = data.planName || '—';
+  document.getElementById('phSub').textContent    = (data.planDays || '—') + ' Days VIP Plan';
+
+  /* Progress */
+  setTimeout(()=>{
+    document.getElementById('progressFill').style.width      = usedPct + '%';
+    document.getElementById('progressFill').style.background = PROG_COLORS[pc] || PROG_COLORS.p28;
+    document.getElementById('progressPct').textContent       = usedPct + '% used';
+    document.getElementById('progressPct').style.color       = PCT_COLORS[pc] || 'var(--gold)';
+  }, 400);
+
+  document.getElementById('progressStart').textContent = 'Start: ' + fmtDate(data.planActivatedAt);
+  document.getElementById('progressEnd').textContent   = 'End: '   + fmtDate(data.planExpiresAt);
+
+  /* Detail cards */
+  document.getElementById('dcActivated').textContent = fmtDateTime(data.planActivatedAt);
+  document.getElementById('dcExpires').textContent   = fmtDateTime(data.planExpiresAt);
+  document.getElementById('dcDays').textContent      = (data.planDays || '—') + ' Days';
+
+  /* Coins */
+  animateCoins(data.coins || 0);
+
+  /* Show section */
+  document.getElementById('activePlanSection').classList.remove('hidden');
+
+  /* Countdown */
+  startCountdown(expMs);
+}
+
+/* ── SHOW NO PLAN ── */
+function showNoPlan(){
+  document.getElementById('noPlanSection').classList.add('show');
+}
+
+/* ── HIDE LOADER ── */
+function hideLoader(){
+  document.getElementById('loadingOverlay').classList.add('hidden');
+}
+
+/* ── AUTH ── */
+onAuthStateChanged(auth, async (user)=>{
+  if(!user){
+    window.location.replace('login.html'); return;
+  }
+  try{
+    const snap = await getDoc(doc(db,'users',user.uid));
+    const data = snap.exists() ? snap.data() : {};
+    const expMs = toMs(data.planExpiresAt);
+    const hasActivePlan = expMs && expMs > Date.now();
+
+    if(hasActivePlan){
+      showActivePlan(data);
+    } else {
+      showNoPlan();
+    }
+  } catch(err){
+    console.error(err);
+    /* Fallback localStorage */
+    const le = parseInt(localStorage.getItem('sp_planExpires')||'0');
+    if(le > Date.now()){
+      showActivePlan({
+        plan:            localStorage.getItem('sp_plan')     || '—',
+        planName:        localStorage.getItem('sp_planName') || 'VIP Plan',
+        planDays:        null,
+        planActivatedAt: null,
+        planExpiresAt:   { toMillis: ()=>le },
+        coins:           parseInt(localStorage.getItem('sp_coins')||'0'),
+      });
+    } else {
+      showNoPlan();
+    }
+  } finally{
+    hideLoader();
+  }
+});
+</script>
+
+</body>
+</html>
