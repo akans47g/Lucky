@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="Get your own Suggester Web Application built professionally. Same website like MV Suggester at affordable price of ₹4,999 only."/>
+<title>Get Your Website | MV Suggester</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#06060e; --card:rgba(15,15,30,0.8); --card2:rgba(22,22,40,0.9);
+  --gold:#f5c518; --gold2:#ffd740; --orange:#ff9100;
+  --green:#00e676; --purple:#9c6fff; --purple2:#ce93d8;
+  --cyan:#00bcd4; --red:#ff4757;
+  --white:#f0f0ff; --gray:#7070a0; --gray2:#282848;
+  --border:rgba(255,255,255,0.08);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--white);
+  font-family:'Rajdhani',sans-serif; overflow-x:hidden; line-height:1.6;
+}
+
+/* ── ANIMATED BG ── */
+body::before{
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 50% at 10% 10%, rgba(156,111,255,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 80%, rgba(245,197,24,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 35% at 50% 50%, rgba(0,188,212,0.05) 0%, transparent 70%);
+  animation:bg-move 15s ease-in-out infinite alternate;
+}
+@keyframes bg-move{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.1) translate(-2%,2%)}}
+
+/* ── PARTICLES ── */
+.particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.p{position:absolute;border-radius:50%;animation:p-float linear infinite;opacity:0}
+@keyframes p-float{0%{transform:translateY(100vh) rotate(0);opacity:0}10%{opacity:.7}90%{opacity:.2}100%{transform:translateY(-100px) rotate(720deg);opacity:0}}
+
+/* ── HEADER ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100; height:60px;
+  background:rgba(6,6,14,0.95);backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(245,197,24,0.12);
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+}
+.nav-brand{
+  font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;
+  background:linear-gradient(90deg,var(--gold),var(--gold2),var(--orange));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.nav-cta{
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  color:#000;border:none;border-radius:10px;padding:8px 16px;
+  font-family:'Orbitron',sans-serif;font-size:11px;font-weight:900;
+  cursor:pointer;letter-spacing:.5px;text-decoration:none;
+  transition:transform .15s,box-shadow .15s;
+  box-shadow:0 4px 16px rgba(245,197,24,0.3);
+}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(245,197,24,0.5)}
+
+main{position:relative;z-index:1;padding-top:60px}
+
+/* ── SECTIONS ── */
+section{padding:60px 20px;max-width:960px;margin:0 auto}
+.sec-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(156,111,255,0.1);border:1px solid rgba(156,111,255,0.25);
+  border-radius:20px;padding:5px 14px;margin-bottom:14px;
+  font-size:12px;color:var(--purple2);font-weight:700;letter-spacing:1px;
+}
+.sec-title{
+  font-family:'Orbitron',sans-serif;font-weight:900;
+  font-size:clamp(22px,5vw,36px);line-height:1.2;margin-bottom:10px;
+}
+.sec-sub{font-size:15px;color:var(--gray);line-height:1.8;max-width:650px;margin:0 auto}
+
+/* ── HERO ── */
+.hero{
+  min-height:90vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:80px 20px 60px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.25);
+  border-radius:20px;padding:5px 16px;margin-bottom:20px;
+  font-size:12px;color:var(--green);font-weight:800;letter-spacing:1.5px;
+  animation:rv .6s cubic-bezier(.22,.68,0,1.2) both;
+}
+.hero-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:lp 1.3s ease-in-out infinite}
+@keyframes lp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.8);opacity:.4}}
+.hero-title{
+  font-family:'Orbitron',sans-serif;font-weight:900;
+  font-size:clamp(26px,6vw,52px);line-height:1.15;margin-bottom:16px;
+  background:linear-gradient(135deg,var(--white) 0%,var(--gold2) 40%,var(--orange) 70%,var(--gold) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:rv .6s .1s cubic-bezier(.22,.68,0,1.2) both;
+}
+.hero-sub{
+  font-size:clamp(14px,3vw,18px);color:rgba(240,240,255,0.7);
+  max-width:580px;margin:0 auto 30px;line-height:1.75;
+  animation:rv .6s .2s cubic-bezier(.22,.68,0,1.2) both;
+}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:rv .6s .3s cubic-bezier(.22,.68,0,1.2) both}
+.btn-primary{
+  background:linear-gradient(135deg,var(--gold),var(--orange),var(--gold));
+  background-size:200%;color:#000;border:none;border-radius:14px;
+  padding:16px 28px;font-family:'Orbitron',sans-serif;font-size:14px;
+  font-weight:900;cursor:pointer;text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;
+  animation:btn-glow 2.5s ease-in-out infinite, shimmer 3s linear infinite;
+  transition:transform .15s;
+}
+@keyframes btn-glow{0%,100%{box-shadow:0 6px 28px rgba(245,197,24,.35)}50%{box-shadow:0 8px 40px rgba(245,197,24,.65),0 0 0 8px rgba(245,197,24,.08)}}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+.btn-primary:hover{transform:translateY(-3px)}
+.btn-secondary{
+  background:rgba(255,255,255,0.06);color:var(--white);
+  border:1.5px solid rgba(255,255,255,0.15);border-radius:14px;
+  padding:15px 26px;font-family:'Rajdhani',sans-serif;font-size:15px;
+  font-weight:700;cursor:pointer;text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:all .2s;backdrop-filter:blur(8px);
+}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);transform:translateY(-2px)}
+
+/* ── STATS BAR ── */
+.stats-bar{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+  margin-top:50px;animation:rv .6s .4s cubic-bezier(.22,.68,0,1.2) both;
+  max-width:480px;margin-left:auto;margin-right:auto;
+}
+.stat-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:16px 10px;text-align:center;
+  backdrop-filter:blur(12px);
+}
+.stat-num{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--gold)}
+.stat-lbl{font-size:10px;color:var(--gray);margin-top:4px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+
+/* ── ABOUT CARD ── */
+.about-card{
+  background:var(--card);border:1px solid rgba(156,111,255,.2);
+  border-radius:22px;padding:32px 28px;
+  backdrop-filter:blur(16px);position:relative;overflow:hidden;
+}
+.about-card::before{
+  content:'';position:absolute;top:-40%;left:-20%;width:140%;height:180%;
+  background:radial-gradient(ellipse at 50% 50%,rgba(156,111,255,.06) 0%,transparent 65%);
+  pointer-events:none;
+}
+.about-card p{font-size:14px;color:rgba(240,240,255,.78);line-height:1.85;margin-bottom:14px}
+.about-card p:last-child{margin-bottom:0}
+.about-card p strong{color:var(--gold);font-weight:800}
+
+/* ── FEATURES GRID ── */
+.features-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;
+}
+.feat-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:16px 14px;
+  backdrop-filter:blur(12px);
+  display:flex;align-items:center;gap:10px;
+  transition:all .2s cubic-bezier(.22,.68,0,1.2);
+  animation:rv .5s cubic-bezier(.22,.68,0,1.2) both;
+  position:relative;overflow:hidden;
+}
+.feat-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:16px 0 0 16px;background:var(--gold);opacity:.6}
+.feat-card:hover{border-color:rgba(245,197,24,.3);transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,.4)}
+.feat-card .fc-icon{font-size:20px;flex-shrink:0}
+.feat-card .fc-txt{font-size:13px;font-weight:700;color:rgba(240,240,255,.88)}
+
+/* admin panel feature cards — purple accent */
+.feat-card.admin::before{background:var(--purple)}
+.feat-card.admin:hover{border-color:rgba(156,111,255,.3)}
+
+/* ── PRICING ── */
+.pricing-wrap{display:flex;justify-content:center;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.price-card-old{
+  background:var(--card);border:1px solid rgba(255,71,87,.2);
+  border-radius:22px;padding:28px 24px;text-align:center;
+  opacity:.7;max-width:240px;flex:1;min-width:180px;
+  backdrop-filter:blur(12px);
+}
+.price-card-old .pc-label{font-size:12px;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.price-card-old .pc-price{font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:rgba(240,240,255,.5);text-decoration:line-through}
+.price-card-old .pc-sub{font-size:12px;color:var(--gray);margin-top:6px}
+
+.price-card-new{
+  background:linear-gradient(135deg,#1a0f35,#201545,#150f2e);
+  border:2px solid rgba(245,197,24,.5);border-radius:24px;
+  padding:32px 28px;text-align:center;max-width:300px;flex:1;min-width:220px;
+  position:relative;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(245,197,24,.15), 0 20px 60px rgba(245,197,24,.15);
+  animation:price-glow 3s ease-in-out infinite;
+}
+@keyframes price-glow{
+  0%,100%{box-shadow:0 0 0 1px rgba(245,197,24,.15),0 20px 60px rgba(245,197,24,.15)}
+  50%{box-shadow:0 0 0 2px rgba(245,197,24,.25),0 24px 70px rgba(245,197,24,.28),0 0 60px rgba(245,197,24,.08)}
+}
+.price-card-new::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 0%,rgba(245,197,24,.12) 0%,transparent 65%);
+}
+.best-badge{
+  position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--gold),var(--orange));
+  color:#000;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:900;
+  padding:5px 18px;border-radius:0 0 14px 14px;letter-spacing:1px;
+  box-shadow:0 4px 16px rgba(245,197,24,.4);
+}
+.pc-offer{font-size:12px;color:var(--gold);font-weight:800;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;margin-top:16px}
+.pc-price-new{font-family:'Orbitron',sans-serif;font-size:46px;font-weight:900;color:var(--gold);line-height:1;text-shadow:0 0 30px rgba(245,197,24,.5)}
+.pc-price-new sup{font-size:22px;vertical-align:super}
+.pc-note{font-size:12px;color:var(--gray);margin-top:6px}
+
+/* ── WHAT YOU GET ── */
+.included-list{display:flex;flex-direction:column;gap:10px}
+.inc-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:14px 16px;
+  backdrop-filter:blur(8px);
+  transition:all .2s;animation:rv .5s cubic-bezier(.22,.68,0,1.2) both;
+}
+.inc-item:hover{border-color:rgba(0,230,118,.25);transform:translateX(5px)}
+.inc-check{
+  width:30px;height:30px;border-radius:10px;flex-shrink:0;
+  background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.25);
+  display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--green);font-weight:900;
+}
+.inc-txt{font-size:14px;font-weight:700;color:rgba(240,240,255,.88)}
+.inc-txt small{display:block;font-size:11px;color:var(--gray);margin-top:2px;font-weight:600}
+
+/* ── WHY US ── */
+.why-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.why-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:20px 16px;text-align:center;
+  backdrop-filter:blur(12px);
+  transition:all .2s cubic-bezier(.22,.68,0,1.2);
+  animation:rv .5s cubic-bezier(.22,.68,0,1.2) both;
+}
+.why-card:hover{border-color:rgba(0,188,212,.3);transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,.4)}
+.why-icon{font-size:30px;margin-bottom:10px;display:block}
+.why-title{font-size:14px;font-weight:800;color:var(--white);margin-bottom:4px}
+.why-sub{font-size:12px;color:var(--gray);line-height:1.55}
+
+/* ── CONTACT FORM ── */
+
+
+/* Telegram card */
+.tg-contact-card{
+  background:linear-gradient(135deg,#081a2d,#0d2540,#061220);
+  border:1px solid rgba(34,158,217,.28);border-radius:22px;
+  padding:28px 22px;backdrop-filter:blur(16px);
+  display:flex;flex-direction:column;gap:16px;
+}
+.tg-icon-big{font-size:48px;text-align:center}
+.tg-card-title{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:#5bc8f5;text-align:center}
+.tg-card-desc{font-size:13px;color:var(--gray);line-height:1.75;text-align:center}
+.tg-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:linear-gradient(135deg,#229ED9,#1a7ab5);
+  color:#fff;border:none;border-radius:14px;
+  padding:15px;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;
+  cursor:pointer;text-decoration:none;
+  box-shadow:0 6px 24px rgba(34,158,217,.3);
+  transition:transform .15s,box-shadow .15s;
+}
+.tg-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(34,158,217,.5)}
+
+.contact-info{display:flex;flex-direction:column;gap:10px;margin-top:auto}
+.ci-item{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:12px;padding:11px 14px;font-size:13px;color:var(--gray);
+}
+.ci-icon{font-size:18px}
+
+/* ── FAQ ── */
+.faq-list{display:flex;flex-direction:column;gap:10px}
+.faq-item{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;backdrop-filter:blur(12px);
+  animation:rv .5s cubic-bezier(.22,.68,0,1.2) both;
+}
+.faq-q{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:16px 18px;cursor:pointer;
+  font-size:14px;font-weight:800;color:var(--white);
+  transition:color .2s;
+}
+.faq-q:hover{color:var(--gold)}
+.faq-arrow{font-size:18px;color:var(--gold);transition:transform .3s;flex-shrink:0}
+.faq-item.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{
+  max-height:0;overflow:hidden;transition:max-height .35s ease, padding .3s ease;
+  font-size:13px;color:rgba(240,240,255,.7);line-height:1.75;
+  padding:0 18px;border-top:0 solid var(--border);
+}
+.faq-item.open .faq-a{max-height:200px;padding:14px 18px;border-top:1px solid var(--border)}
+
+/* ── FINAL CTA ── */
+.final-cta{
+  background:linear-gradient(135deg,#150f30,#201545,#0f0820);
+  border-radius:28px;border:1px solid rgba(245,197,24,.25);
+  padding:50px 28px;text-align:center;position:relative;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+}
+.final-cta::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 0%,rgba(245,197,24,.1) 0%,transparent 65%);
+}
+.final-cta-title{
+  font-family:'Orbitron',sans-serif;font-size:clamp(20px,4.5vw,32px);
+  font-weight:900;color:var(--white);margin-bottom:12px;position:relative;
+}
+.final-cta-sub{font-size:15px;color:var(--gray);line-height:1.75;margin-bottom:28px;position:relative}
+.final-cta-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,var(--gold),var(--orange),var(--gold));
+  background-size:200%;color:#000;border:none;border-radius:16px;
+  padding:18px 36px;font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;
+  cursor:pointer;letter-spacing:.5px;text-decoration:none;
+  animation:btn-glow 2.5s ease-in-out infinite,shimmer 3s linear infinite;
+  transition:transform .15s;position:relative;
+}
+.final-cta-btn:hover{transform:translateY(-3px)}
+
+/* ── FOOTER ── */
+footer{
+  background:rgba(6,6,14,.95);border-top:1px solid var(--border);
+  padding:30px 20px;text-align:center;
+  font-size:12px;color:var(--gray);
+}
+footer strong{color:var(--gold)}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);margin:0 20px}
+
+
+
+/* ── SECTION TITLE DIVIDER ── */
+.title-wrap{text-align:center;margin-bottom:36px}
+.title-wrap .sec-title{
+  background:linear-gradient(90deg,var(--white),var(--gold2),var(--white));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.title-wrap .title-line{
+  width:60px;height:3px;border-radius:3px;margin:10px auto 0;
+  background:linear-gradient(90deg,var(--purple),var(--gold));
+}
+
+@keyframes rv{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-brand">MV Suggester</span>
+  <a href="https://t.me/AKANS_M7?text=Sir%20hamko%20suggester%20website%20banani%20hai" target="_blank" rel="noopener" class="nav-cta">Get Your Website</a>
+</nav>
+
+<main>
+
+<!-- ════════════ HERO ════════════ -->
+<div class="hero">
+  <div class="hero-badge">
+    <div class="hero-badge-dot"></div>
+    🚀 LIMITED TIME OFFER
+  </div>
+  <h1 class="hero-title">Apni Khud Ki<br/>Suggester Website<br/>Banwaye</h1>
+  <p class="hero-sub">
+    Apni khud ki professional website launch karo aur apna online business shuru karo.
+    Same website — affordable price mein!
+  </p>
+  <div class="hero-btns">
+    <a href="https://t.me/AKANS_M7?text=Sir%20hamko%20suggester%20website%20banani%20hai" target="_blank" rel="noopener" class="btn-primary">🚀 Order Karo — ₹4,999 Only</a>
+    <a href="#features" class="btn-secondary">✨ Features Dekho</a>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num" id="c1">0+</div>
+      <div class="stat-lbl">Websites Built</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">₹4,999</div>
+      <div class="stat-lbl">Special Price</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">1 Year</div>
+      <div class="stat-lbl">Free Domain</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════ ABOUT ════════════ -->
+<section class="reveal">
+  <div class="title-wrap">
+    <span class="sec-badge">📖 About This Service</span>
+    <h2 class="sec-title">Kya Hai Yeh Service?</h2>
+    <div class="title-line"></div>
+  </div>
+  <div class="about-card">
+    <p>Agar aap bhi is website ki tarah apni khud ki <strong>Suggester Web Application</strong> banana chahte hain, to hum aapke liye same website <strong>affordable price mein</strong> develop karke denge.</p>
+    <p>Ye website <strong>students, creators, freelancers aur business owners</strong> ke liye perfect hai jo apna online platform launch karna chahte hain.</p>
+    <p>Website banne ke baad aap <strong>Ads, Affiliate Marketing, Premium Services</strong> aur dusre online earning methods ka use karke income generate kar sakte hain. Actual earning aapki mehnat, marketing aur website traffic par depend karegi.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════ WEBSITE FEATURES ════════════ -->
+<section id="features" class="reveal">
+  <div class="title-wrap">
+    <span class="sec-badge">⚡ Website Features</span>
+    <h2 class="sec-title">Website Mein Kya Milega?</h2>
+    <div class="title-line"></div>
+    <p class="sec-sub">Yeh sab features aapki website mein included hain</p>
+  </div>
+  <div class="features-grid" id="featGrid"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════ ADMIN PANEL FEATURES ════════════ -->
+<section class="reveal">
+  <div class="title-wrap">
+    <span class="sec-badge">🛠️ Admin Panel</span>
+    <h2 class="sec-title">Admin Panel Features</h2>
+    <div class="title-line"></div>
+    <p class="sec-sub">Powerful admin panel se apni website ko aasaani se manage karo</p>
+  </div>
+  <div class="features-grid" id="adminGrid"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════ PRICING ════════════ -->
+<section class="reveal">
+  <div class="title-wrap">
+    <span class="sec-badge">💰 Pricing</span>
+    <h2 class="sec-title">Sirf ₹4,999 Mein!</h2>
+    <div class="title-line"></div>
+  </div>
+  <div class="pricing-wrap">
+    <div class="price-card-old">
+      <div class="pc-label">💰 Market Price</div>
+      <div class="pc-price">₹12,000 – ₹18,000+</div>
+      <div class="pc-sub">Dusri agencies itna charge karti hain</div>
+    </div>
+    <div class="price-card-new">
+      <div class="best-badge">🔥 BEST OFFER</div>
+      <div class="pc-offer">🎉 Our Special Price</div>
+      <div class="pc-price-new"><sup>₹</sup>4,999</div>
+      <div class="pc-note">One-time payment — No hidden charges</div>
+      <a href="https://t.me/AKANS_M7?text=Sir%20hamko%20suggester%20website%20banani%20hai" target="_blank" rel="noopener" class="btn-primary" style="margin-top:20px;font-size:13px;padding:13px 20px;justify-content:center;text-decoration:none">🚀 Order Karo Abhi</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════ WHAT'S INCLUDED ════════════ -->
+<section class="reveal">
+  <div class="title-wrap">
+    <span class="sec-badge">✅ Included</span>
+    <h2 class="sec-title">Is Price Mein Kya Milega?</h2>
+    <div class="title-line"></div>
+  </div>
+  <div class="included-list" id="includedList"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════ WHY CHOOSE US ════════════ -->
+<section class="reveal">
+  <div class="title-wrap">
+    <span class="sec-badge">🏆 Why Us</span>
+    <h2 class="sec-title">Hume Kyun Chunein?</h2>
+    <div class="title-line"></div>
+  </div>
+  <div class="why-grid" id="whyGrid"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════ CONTACT ════════════ -->
+<section id="contact" class="reveal">
+  <div class="title-wrap">
+    <span class="sec-badge">📞 Contact Us</span>
+    <h2 class="sec-title">Humse Sampark Karo</h2>
+    <div class="title-line"></div>
+    <p class="sec-sub">Website banwane ke liye ya koi bhi sawaal ke liye directly Telegram par message karo</p>
+  </div>
+  <div style="max-width:440px;margin:0 auto">
+    <div class="tg-contact-card">
+      <div class="tg-icon-big">📣</div>
+      <div class="tg-card-title">💬 Chat With Me On Telegram</div>
+      <div class="tg-card-desc">
+        Website banwane se pehle agar koi bhi question puchna ho ya project discuss karna ho — directly Telegram par message karo.
+        <strong style="color:#5bc8f5">Fast reply milti hai!</strong>
+      </div>
+      <a class="tg-btn" href="https://t.me/AKANS_M7?text=Sir%20hamko%20suggester%20website%20banani%20hai" target="_blank" rel="noopener">👉 Chat on Telegram</a>
+      <div class="contact-info">
+        <div class="ci-item"><span class="ci-icon">⚡</span>Fast Response — Usually within 1 hour</div>
+        <div class="ci-item"><span class="ci-icon">💼</span>Professional &amp; Experienced Team</div>
+        <div class="ci-item"><span class="ci-icon">🔒</span>100% Secure &amp; Confidential</div>
+        <div class="ci-item"><span class="ci-icon">🌐</span>Remote Service — Pan India</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- ════════════ FAQ ════════════ -->
+<section class="reveal">
+  <div class="title-wrap">
+    <span class="sec-badge">❓ FAQ</span>
+    <h2 class="sec-title">Common Sawaal</h2>
+    <div class="title-line"></div>
+  </div>
+  <div class="faq-list" id="faqList"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ════════════ FINAL CTA ════════════ -->
+<section class="reveal" style="padding-bottom:30px">
+  <div class="final-cta">
+    <h2 class="final-cta-title">🚀 Ready To Start Your Own Website?</h2>
+    <p class="final-cta-sub">
+      Aaj hi apni professional Suggester website banwaye.<br>
+      Sirf <strong style="color:var(--gold)">₹4,999</strong> mein — 1 Year Domain + Free Hosting included!
+    </p>
+    <a href="https://t.me/AKANS_M7?text=Sir%20hamko%20suggester%20website%20banani%20hai" target="_blank" rel="noopener" class="final-cta-btn">🚀 Order Your Website Now</a>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <strong>MV Suggester</strong> — Smart Prediction. Better Decisions.<br>
+  <span style="margin-top:6px;display:block">© 2026 MV Suggester. All Rights Reserved.</span>
+</footer>
+
+<script>
+/* ── PARTICLES ── */
+const PC=['rgba(156,111,255,0.5)','rgba(245,197,24,0.45)','rgba(0,230,118,0.45)','rgba(0,188,212,0.4)'];
+for(let i=0;i<20;i++){
+  const p=document.createElement('div');
+  p.className='p'; const s=Math.random()*4+2;
+  p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${PC[i%PC.length]};animation-duration:${Math.random()*14+8}s;animation-delay:${Math.random()*10}s`;
+  document.getElementById('particles').appendChild(p);
+}
+
+/* ── DATA ── */
+const WEBSITE_FEATURES=[
+  {i:'🎨',t:'Premium Responsive Design'},{i:'⚡',t:'Fast Loading'},{i:'📱',t:'Mobile Friendly'},
+  {i:'🔍',t:'SEO Friendly'},{i:'🔐',t:'Google Login System'},{i:'📧',t:'Email/Password Login'},
+  {i:'💎',t:'VIP Signal Page'},{i:'🪙',t:'Coin/Subscription System'},{i:'💰',t:'Add Money (UPI Payment)'},
+  {i:'📊',t:'Live Countdown Timer'},{i:'🔄',t:'Real-time Updates'},{i:'⭐',t:'Reviews & Ratings'},
+  {i:'👥',t:'Community Page'},{i:'ℹ️',t:'About Page (3 Languages)'},{i:'📈',t:'Analytics'},
+  {i:'🔒',t:'Secure Firebase Backend'},{i:'🌐',t:'GitHub Pages Hosting'},{i:'🔔',t:'Announcement System'},
+  {i:'🛡️',t:'Firestore Security Rules'},{i:'🎯',t:'Future Updates (If Available)'},
+];
+const ADMIN_FEATURES=[
+  {i:'📊',t:'Dashboard with Live Stats'},{i:'💰',t:'Add Money Requests'},{i:'✅',t:'Approve/Reject Payments'},
+  {i:'👥',t:'User Management'},{i:'🪙',t:'Edit User Coins'},{i:'💎',t:'Set/Change Plans'},
+  {i:'🚫',t:'Ban/Unban Users'},{i:'⭐',t:'Reviews Management'},{i:'✏️',t:'Edit/Delete Reviews'},
+  {i:'🔧',t:'Maintenance Mode'},{i:'📢',t:'Announcement Banner'},{i:'👑',t:'Manual Plan Activation'},
+  {i:'🔒',t:'Secure Admin Access'},{i:'📱',t:'Mobile Admin Panel'},
+];
+const INCLUDED=[
+  {t:'Complete Suggester Website',s:'Bilkul same website jaise yeh hai'},
+  {t:'Complete Admin Panel',s:'Full management with all tabs'},
+  {t:'1 Year Domain Free',s:'Custom domain name aapke naam se'},
+  {t:'Free Hosting Included',s:'GitHub Pages — 0 extra cost'},
+  {t:'50,000+ Monthly Visitors Supported',s:'Actual performance traffic par depend karega'},
+  {t:'Website Setup & Deployment',s:'Hum khud setup karke denge'},
+  {t:'Fully Responsive Design',s:'Mobile, tablet, desktop — sab pe perfect'},
+];
+const WHY=[
+  {i:'💸',t:'Affordable Price',s:'Market se 70% kam mein same quality'},
+  {i:'🏆',t:'Premium Quality',s:'Professional grade code aur design'},
+  {i:'⚡',t:'Fast Delivery',s:'Time par deliver karenge'},
+  {i:'🎯',t:'Easy To Manage',s:'Koi technical knowledge nahi chahiye'},
+  {i:'🎨',t:'Professional Design',s:'Premium UI/UX experience'},
+  {i:'♾️',t:'Lifetime Support Guidance',s:'Hamesha help ke liye available'},
+  {i:'🌱',t:'Beginner Friendly',s:'Pehli baar bhi manage kar sakte ho'},
+];
+const FAQS=[
+  {q:'Website kitne din mein ready hogi?',a:'Website generally 5-10 business days mein ready ho jaati hai, depending on requirements aur revisions.'},
+  {q:'Domain free milega?',a:'Haan! 1 year ke liye domain bilkul free milega. Renewal ke baad nominal charge lagega.'},
+  {q:'Hosting included hai?',a:'Haan! GitHub Pages pe free hosting included hai jo approximately 50,000+ monthly visitors handle kar sakti hai.'},
+  {q:'Future mein updates milenge?',a:'Agar koi major update ya bug fix aata hai to hum koshish karenge provide karne ki. Ye guaranteed nahi hai lekin hum support denge.'},
+  {q:'Payment kaise karni hogi?',a:'Payment UPI (PhonePe, GPay, Paytm) ke through karni hogi. 50% advance aur 50% delivery ke baad.'},
+  {q:'Kya main khud website manage kar sakta hoon?',a:'Bilkul! Website simple hai aur GitHub se manage hoti hai. Hum aapko poori guidance denge.'},
+  {q:'Kya yeh website mobile pe bhi kaam karegi?',a:'Haan! Website fully responsive hai — mobile, tablet aur desktop sab pe perfectly kaam karegi.'},
+];
+
+/* ── RENDER FEATURES ── */
+function renderGrid(id,data,cls=''){
+  const g=document.getElementById(id);
+  data.forEach((f,i)=>{
+    const d=document.createElement('div');
+    d.className=`feat-card ${cls}`;
+    d.style.animationDelay=(i*0.05)+'s';
+    d.innerHTML=`<span class="fc-icon">${f.i}</span><span class="fc-txt">${f.t}</span>`;
+    g.appendChild(d);
+  });
+}
+renderGrid('featGrid',WEBSITE_FEATURES);
+renderGrid('adminGrid',ADMIN_FEATURES,'admin');
+
+/* ── RENDER INCLUDED ── */
+const il=document.getElementById('includedList');
+INCLUDED.forEach((item,i)=>{
+  const d=document.createElement('div');
+  d.className='inc-item';d.style.animationDelay=(i*0.07)+'s';
+  d.innerHTML=`<div class="inc-check">✓</div><div class="inc-txt">${item.t}<small>${item.s}</small></div>`;
+  il.appendChild(d);
+});
+
+/* ── RENDER WHY ── */
+const wg=document.getElementById('whyGrid');
+WHY.forEach((w,i)=>{
+  const d=document.createElement('div');
+  d.className='why-card';d.style.animationDelay=(i*0.07)+'s';
+  d.innerHTML=`<span class="why-icon">${w.i}</span><div class="why-title">${w.t}</div><div class="why-sub">${w.s}</div>`;
+  wg.appendChild(d);
+});
+
+/* ── RENDER FAQ ── */
+const fl=document.getElementById('faqList');
+FAQS.forEach((faq,i)=>{
+  const d=document.createElement('div');
+  d.className='faq-item';d.style.animationDelay=(i*0.06)+'s';
+  d.innerHTML=`
+    <div class="faq-q" onclick="toggleFaq(this)">
+      <span>${faq.q}</span><span class="faq-arrow">⌄</span>
+    </div>
+    <div class="faq-a">${faq.a}</div>`;
+  fl.appendChild(d);
+});
+
+function toggleFaq(el){
+  const item=el.parentElement;
+  document.querySelectorAll('.faq-item.open').forEach(f=>{if(f!==item)f.classList.remove('open')});
+  item.classList.toggle('open');
+}
+
+/* ── COUNTER ANIMATION ── */
+function countUp(el,target,suffix=''){
+  let cur=0;const step=Math.max(1,Math.ceil(target/40));
+  const iv=setInterval(()=>{cur+=step;if(cur>=target){cur=target;clearInterval(iv);}el.textContent=cur+suffix;},40);
+}
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){countUp(document.getElementById('c1'),50,'+');obs.disconnect();}});
+},{threshold:.5});
+if(document.getElementById('c1')) obs.observe(document.getElementById('c1'));
+
+/* ── SCROLL REVEAL ── */
+const revObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
+},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+
+
+</script>
+</body>
+</html>
