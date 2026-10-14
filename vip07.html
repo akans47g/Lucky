@@ -316,7 +316,93 @@
     .dir-big  {color:var(--green);font-weight:900;font-style:normal}
     .dir-small{color:var(--gold);font-weight:900;font-style:normal}
 
-    /* ── GLOW FLASH on signal change ── */
+    /* ── PATTERN ANALYZER ── */
+    .analyzer-card{
+      border-radius:20px; padding:18px 16px; margin-top:12px;
+      background:var(--card2); border:1px solid var(--border);
+      position:relative; overflow:hidden;
+    }
+    .az-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+    .az-title{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;color:var(--white)}
+    .az-reset{background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:11px;color:var(--gray);cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;transition:border-color .15s}
+    .az-reset:hover{border-color:rgba(255,255,255,.18);color:var(--white)}
+    .az-sub{font-size:12px;color:var(--gray);margin-bottom:14px;line-height:1.5}
+    .az-sub span{color:var(--gold);font-weight:700}
+
+    /* 20 trade boxes */
+    .trade-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:14px}
+    .trade-box{
+      aspect-ratio:1; border-radius:10px;
+      border:1.5px solid var(--border);
+      background:var(--card3);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      cursor:pointer; transition:all .18s; position:relative;
+      user-select:none;
+    }
+    .trade-box:active{transform:scale(.92)}
+    .trade-box .tb-num{font-size:9px;color:var(--gray);font-weight:700;line-height:1;margin-bottom:3px}
+    .trade-box .tb-val{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:900;line-height:1}
+    /* States */
+    .trade-box.tb-empty .tb-val{color:var(--gray2)}
+    .trade-box.tb-empty .tb-val::before{content:'?'}
+    .trade-box.tb-big{background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.4)}
+    .trade-box.tb-big .tb-val{color:var(--green)}
+    .trade-box.tb-big .tb-val::before{content:'B'}
+    .trade-box.tb-small{background:rgba(245,197,24,.1);border-color:rgba(245,197,24,.4)}
+    .trade-box.tb-small .tb-val{color:var(--gold)}
+    .trade-box.tb-small .tb-val::before{content:'S'}
+    /* latest trade indicator */
+    .trade-box:nth-child(20) .tb-num::after{content:' ← Latest';color:var(--purple);font-size:7px}
+
+    /* legend */
+    .az-legend{display:flex;gap:10px;margin-bottom:12px}
+    .az-leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray);font-weight:700}
+    .az-leg-dot{width:10px;height:10px;border-radius:4px}
+    .leg-b{background:rgba(0,230,118,.35)}
+    .leg-s{background:rgba(245,197,24,.35)}
+    .leg-e{background:var(--card3);border:1px solid var(--border)}
+
+    /* analyze button */
+    .az-btn{
+      width:100%;padding:13px;border:none;border-radius:13px;
+      background:linear-gradient(135deg,var(--purple),var(--gold));
+      color:#000;font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;
+      cursor:pointer;transition:transform .15s;letter-spacing:.3px;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+    }
+    .az-btn:active{transform:scale(.98)}
+    .az-btn:disabled{opacity:.4;cursor:not-allowed}
+
+    /* result card */
+    .az-result{
+      margin-top:12px;border-radius:15px;padding:16px;
+      border:1px solid;display:none;
+      animation:rv .5s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    .az-result.show{display:block}
+    .az-result.res-big{background:rgba(0,230,118,.06);border-color:rgba(0,230,118,.3)}
+    .az-result.res-small{background:rgba(245,197,24,.06);border-color:rgba(245,197,24,.3)}
+    .azr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .azr-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray)}
+    .azr-conf{font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;max-width:200px;text-align:center;line-height:1.4}
+    .res-big .azr-conf{background:rgba(0,230,118,.12);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+    .res-small .azr-conf{background:rgba(245,197,24,.12);color:var(--gold);border:1px solid rgba(245,197,24,.25)}
+    .azr-suggestion{font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;margin-bottom:6px}
+    .res-big .azr-suggestion{color:var(--green)}
+    .res-small .azr-suggestion{color:var(--gold)}
+    .azr-pattern{font-size:12px;color:var(--gray);line-height:1.65}
+    .azr-pattern strong{color:var(--white);font-weight:800}
+    .azr-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:10px}
+    .azrs-item{background:rgba(0,0,0,.2);border-radius:9px;padding:9px 6px;text-align:center;border:1px solid rgba(255,255,255,.05)}
+    .azrs-num{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;color:var(--white)}
+    .azrs-lbl{font-size:9px;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;font-weight:700}
+    .azr-warning{
+      margin-top:10px;padding:8px 11px;border-radius:9px;
+      background:rgba(255,145,0,.08);border:1px solid rgba(255,145,0,.2);
+      font-size:11px;color:var(--orange);line-height:1.55;
+    }
+
+    @keyframes rv{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
     @keyframes glow-big  {0%,100%{box-shadow:0 24px 64px rgba(0,0,0,0.7)}50%{box-shadow:0 24px 64px rgba(0,0,0,0.7),0 0 50px rgba(0,230,118,0.22)}}
     @keyframes glow-small{0%,100%{box-shadow:0 24px 64px rgba(0,0,0,0.7)}50%{box-shadow:0 24px 64px rgba(0,0,0,0.7),0 0 50px rgba(245,197,24,0.22)}}
     .signal-card.glow-big  {animation:glow-big   .5s ease-out}
@@ -460,6 +546,43 @@
 
       </div>
     </div>
+
+    <!-- ══ PATTERN ANALYZER ══ -->
+    <div class="analyzer-card">
+      <div class="az-head">
+        <div class="az-title">📊 Pattern Analyzer</div>
+        <button class="az-reset" onclick="resetAnalyzer()">↺ Reset</button>
+      </div>
+      <div class="az-sub">
+        Apne <span>last 20 trades</span> enter karo — AI pattern dekh ke suggest karega<br>
+        Tap: <strong style="color:var(--green)">B</strong>=Big &nbsp;·&nbsp; <strong style="color:var(--gold)">S</strong>=Small &nbsp;·&nbsp; ?=Skip
+      </div>
+      <div class="az-legend">
+        <div class="az-leg-item"><div class="az-leg-dot leg-b"></div>Big</div>
+        <div class="az-leg-item"><div class="az-leg-dot leg-s"></div>Small</div>
+        <div class="az-leg-item"><div class="az-leg-dot leg-e"></div>Empty</div>
+      </div>
+      <div class="trade-grid" id="tradeGrid"></div>
+      <button class="az-btn" id="analyzeBtn" onclick="runAnalysis()">
+        🤖 Analyze &amp; Suggest
+      </button>
+      <div class="az-result" id="azResult">
+        <div class="azr-top">
+          <span class="azr-label">🤖 AI Suggestion</span>
+          <span class="azr-conf" id="azrConf">—%</span>
+        </div>
+        <div class="azr-suggestion" id="azrSuggestion">—</div>
+        <div class="azr-pattern" id="azrPattern"></div>
+        <div class="azr-stats">
+          <div class="azrs-item"><div class="azrs-num" id="azrBigCount">0</div><div class="azrs-lbl">Big Count</div></div>
+          <div class="azrs-item"><div class="azrs-num" id="azrSmallCount">0</div><div class="azrs-lbl">Small Count</div></div>
+          <div class="azrs-item"><div class="azrs-num" id="azrStreak">0</div><div class="azrs-lbl">Cur Streak</div></div>
+        </div>
+        <div class="azr-warning">⚠️ Yeh sirf pattern analysis hai — guaranteed prediction nahi. Apne judgement se trade karo.</div>
+      </div>
+    </div>
+    <!-- ══ END ANALYZER ══ -->
+
   </div>
 
 </main>
@@ -692,6 +815,269 @@ function showToast(msg, type='info'){
     t.classList.remove('show');
     setTimeout(() => t.classList.add('hidden'), 400);
   }, 3200);
+}
+
+/* ════════════════════════════════════════════
+   ADVANCED PATTERN ANALYZER v2
+   Markov Chain + Trigram + Multi-Voting
+════════════════════════════════════════════ */
+const _trades = new Array(20).fill(null);
+
+/* ── Build 20 clickable boxes ── */
+(function buildTradeGrid(){
+  const grid = document.getElementById('tradeGrid');
+  if(!grid) return;
+  for(let i=0; i<20; i++){
+    const box = document.createElement('div');
+    box.className = 'trade-box tb-empty';
+    box.id = 'tb_' + i;
+    box.innerHTML = `<div class="tb-num">${i+1}</div><div class="tb-val"></div>`;
+    box.addEventListener('click', ()=> cycleTrade(i));
+    grid.appendChild(box);
+  }
+})();
+
+function cycleTrade(idx){
+  const cur = _trades[idx];
+  _trades[idx] = cur===null ? 'B' : cur==='B' ? 'S' : null;
+  updateBox(idx);
+  document.getElementById('azResult').classList.remove('show');
+}
+function updateBox(idx){
+  const box = document.getElementById('tb_'+idx);
+  if(!box) return;
+  const v = _trades[idx];
+  box.className = 'trade-box '+(v==='B'?'tb-big':v==='S'?'tb-small':'tb-empty');
+}
+function resetAnalyzer(){
+  for(let i=0;i<20;i++){_trades[i]=null;updateBox(i);}
+  document.getElementById('azResult').classList.remove('show');
+}
+
+/* ══════════════════════════════
+   ENGINE 1 — MARKOV CHAIN
+   B/S ke baad kya aaya → probability
+══════════════════════════════ */
+function markovAnalysis(filled){
+  /* Build transition table */
+  const trans = { B:{B:0,S:0}, S:{B:0,S:0} };
+  for(let i=0; i<filled.length-1; i++){
+    trans[filled[i]][filled[i+1]]++;
+  }
+  const last   = filled[filled.length-1];
+  const afterB = trans[last].B + trans[last].S;
+  if(afterB === 0) return { suggestion:'', confidence:0, detail:'', weight:0 };
+
+  const probB = trans[last].B / afterB;
+  const probS = trans[last].S / afterB;
+  const suggestion = probB >= probS ? 'BIG' : 'SMALL';
+  const winProb    = Math.max(probB, probS);
+  const confidence = Math.round(winProb * 100);
+
+  /* Only trust if enough transitions seen */
+  if(afterB < 2) return { suggestion, confidence: Math.min(confidence,60), detail:`Markov: ${last} ke baad ${suggestion} = ${confidence}%`, weight:1 };
+
+  return {
+    suggestion,
+    confidence,
+    detail: `📊 <strong>Markov Chain:</strong> "${last}" ke baad "${suggestion}" aaya hai ${Math.round(winProb*100)}% baar (${trans[last][suggestion==='BIG'?'B':'S']}/${afterB} trades)`,
+    weight: afterB >= 4 ? 3 : 2
+  };
+}
+
+/* ══════════════════════════════
+   ENGINE 2 — TRIGRAM MATCHING
+   Last 3 ka pattern → history mein khojo
+══════════════════════════════ */
+function trigramAnalysis(filled){
+  if(filled.length < 4) return { suggestion:'', confidence:0, detail:'', weight:0 };
+
+  const last3 = filled.slice(-3).join('');
+  let afterB  = 0, afterS = 0;
+
+  /* Scan full history for this trigram */
+  for(let i=0; i<=filled.length-4; i++){
+    const trigram = filled.slice(i,i+3).join('');
+    if(trigram === last3){
+      if(filled[i+3]==='B') afterB++;
+      else                   afterS++;
+    }
+  }
+
+  const total = afterB + afterS;
+  if(total === 0) return { suggestion:'', confidence:0, detail:`Trigram "${last3}": History mein match nahi mila`, weight:0 };
+
+  const suggestion = afterB >= afterS ? 'BIG' : 'SMALL';
+  const winProb    = Math.max(afterB,afterS) / total;
+  const confidence = Math.round(winProb * 100);
+
+  return {
+    suggestion,
+    confidence,
+    detail: `🔍 <strong>Trigram Match:</strong> Pattern "${last3}" ke baad ${suggestion} aaya = ${Math.round(winProb*100)}% (${Math.max(afterB,afterS)}/${total} matches)`,
+    weight: total >= 3 ? 3 : total >= 2 ? 2 : 1
+  };
+}
+
+/* ══════════════════════════════
+   ENGINE 3 — STREAK + REVERSION
+══════════════════════════════ */
+function streakAnalysis(filled){
+  const last = filled[filled.length-1];
+  let streakLen = 0;
+  for(let i=filled.length-1; i>=0; i--){
+    if(filled[i]===last) streakLen++;
+    else break;
+  }
+  if(streakLen < 3) return { suggestion:'', confidence:0, detail:'', weight:0 };
+
+  const suggestion = last==='B' ? 'SMALL' : 'BIG';
+  const confidence = Math.min(80, 55 + streakLen*5);
+  return {
+    suggestion,
+    confidence,
+    detail: `🔁 <strong>Streak Reversion:</strong> ${streakLen}x ${last==='B'?'Big':'Small'} streak — opposite aane ki probability high`,
+    weight: streakLen >= 5 ? 3 : 2
+  };
+}
+
+/* ══════════════════════════════
+   ENGINE 4 — ALTERNATING PATTERN
+══════════════════════════════ */
+function alternatingAnalysis(filled){
+  const last5 = filled.slice(-6);
+  if(last5.length < 4) return { suggestion:'', confidence:0, detail:'', weight:0 };
+  let altCount = 0;
+  for(let i=1;i<last5.length;i++){
+    if(last5[i]!==last5[i-1]) altCount++;
+  }
+  if(altCount < last5.length-2) return { suggestion:'', confidence:0, detail:'', weight:0 };
+
+  const suggestion = filled[filled.length-1]==='B' ? 'SMALL' : 'BIG';
+  return {
+    suggestion,
+    confidence: 68,
+    detail: `🔄 <strong>Alternating Pattern:</strong> B-S-B-S pattern detect hua — next opposite hoga`,
+    weight: 2
+  };
+}
+
+/* ══════════════════════════════
+   ENGINE 5 — MULTI-WINDOW
+   3 alag windows se compare
+══════════════════════════════ */
+function multiWindowAnalysis(filled){
+  if(filled.length < 8) return { suggestion:'', confidence:0, detail:'', weight:0 };
+  const wins  = [ filled.slice(-5), filled.slice(-10), filled ];
+  const votes = { BIG:0, SMALL:0 };
+  wins.forEach(w => {
+    const b = w.filter(t=>t==='B').length;
+    const s = w.filter(t=>t==='S').length;
+    /* Mean reversion: whichever is MORE → suggest OPPOSITE */
+    if(b > s) votes.SMALL++; else votes.BIG++;
+  });
+  const suggestion = votes.BIG >= votes.SMALL ? 'BIG' : 'SMALL';
+  const winVotes   = Math.max(votes.BIG, votes.SMALL);
+  return {
+    suggestion,
+    confidence: Math.round(50 + winVotes*8),
+    detail: `📐 <strong>Multi-Window:</strong> 5/10/20 trades analysis — ${winVotes}/3 windows ${suggestion} suggest kar rahe hain`,
+    weight: winVotes >= 2 ? 2 : 1
+  };
+}
+
+/* ══════════════════════════════════════════════
+   MULTI-VOTING AGGREGATOR
+   Teeno engines ka vote → final decision
+══════════════════════════════════════════════ */
+function runAnalysis(){
+  const filled = _trades.filter(t=>t!==null);
+  if(filled.length < 5){
+    showToast('⚠️ Kam se kam 5 trades enter karo', 'warn');
+    return;
+  }
+
+  const bigCount   = filled.filter(t=>t==='B').length;
+  const smallCount = filled.filter(t=>t==='S').length;
+
+  /* Current streak for display */
+  const lastVal = filled[filled.length-1];
+  let streakLen = 0;
+  for(let i=filled.length-1; i>=0; i--){
+    if(filled[i]===lastVal) streakLen++; else break;
+  }
+
+  /* ── Run all 5 engines ── */
+  const engines = [
+    markovAnalysis(filled),
+    trigramAnalysis(filled),
+    streakAnalysis(filled),
+    alternatingAnalysis(filled),
+    multiWindowAnalysis(filled)
+  ].filter(e => e.suggestion !== '');  /* Remove engines with no opinion */
+
+  if(engines.length === 0){
+    showToast('⚠️ Aur trades enter karo — analysis ke liye data kam hai','warn');
+    return;
+  }
+
+  /* ── Weighted voting ── */
+  let wBIG=0, wSMALL=0;
+  engines.forEach(e => {
+    if(e.suggestion==='BIG')   wBIG   += e.weight * (e.confidence/100);
+    else                        wSMALL += e.weight * (e.confidence/100);
+  });
+
+  const totalW     = wBIG + wSMALL;
+  const suggestion = wBIG >= wSMALL ? 'BIG' : 'SMALL';
+  const winWeight  = Math.max(wBIG, wSMALL);
+
+  /* ── Final confidence ── */
+  let confidence = Math.round((winWeight / totalW) * 100);
+  /* Scale 50-100 → 55-88 to stay realistic */
+  confidence = Math.round(55 + (confidence-50) * 0.66);
+  confidence = Math.min(88, Math.max(52, confidence));
+
+  /* ── Engines that agree/disagree ── */
+  const agree    = engines.filter(e=>e.suggestion===suggestion).length;
+  const disagree = engines.length - agree;
+
+  /* ── Build pattern text ── */
+  const agreeParts = engines
+    .filter(e=>e.suggestion===suggestion && e.detail)
+    .map(e=>`<div style="margin-bottom:7px">✅ ${e.detail}</div>`)
+    .join('');
+  const disagreeParts = engines
+    .filter(e=>e.suggestion!==suggestion && e.detail)
+    .map(e=>`<div style="margin-bottom:7px;opacity:.6">⚡ ${e.detail}</div>`)
+    .join('');
+
+  const patternTxt = `
+    <div style="margin-bottom:10px;font-size:11px;color:var(--gray)">
+      <strong style="color:var(--white)">${agree}/${engines.length} engines</strong> agree kar rahe hain
+      ${disagree>0 ? `· <span style="color:var(--orange)">${disagree} disagree</span>`:''}
+    </div>
+    ${agreeParts}
+    ${disagreeParts ? `<div style="margin-top:6px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)">${disagreeParts}</div>` : ''}
+  `;
+
+  /* ── Confidence label ── */
+  const confLabel = confidence >= 78 ? '🔥 High Confidence'
+                  : confidence >= 65 ? '⚡ Moderate'
+                  : '⚠️ Low Confidence';
+
+  /* ── UPDATE UI ── */
+  const resEl = document.getElementById('azResult');
+  resEl.className = `az-result show ${suggestion==='BIG'?'res-big':'res-small'}`;
+
+  document.getElementById('azrSuggestion').textContent = suggestion;
+  document.getElementById('azrConf').textContent       = confidence+'% · '+confLabel;
+  document.getElementById('azrPattern').innerHTML      = patternTxt;
+  document.getElementById('azrBigCount').textContent   = bigCount;
+  document.getElementById('azrSmallCount').textContent = smallCount;
+  document.getElementById('azrStreak').textContent     = streakLen + lastVal;
+
+  setTimeout(()=> resEl.scrollIntoView({behavior:'smooth', block:'nearest'}), 150);
 }
 </script>
 
